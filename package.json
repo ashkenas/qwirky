@@ -1,0 +1,19 @@
+{
+  "name": "qwirky",
+  "version": "0.1.0",
+  "description": "An online multiplayer tile-matching games",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashkenas/qwirky.git"
+  },
+  "scripts": {
+    "start": "npm run build --prefix client"
+  },
+  "author": "Jacob Ashkenas",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ashkenas/qwirky/issues"
+  },
+  "homepage": "https://github.com/ashkenas/qwirky#readme"
+}
