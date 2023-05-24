@@ -1,0 +1,65 @@
+$colors: rgb(255, 0, 0), rgb(255, 200, 0), rgb(251, 255, 0),
+  rgb(0, 255, 0), rgb(0, 0, 255), rgb(255, 0, 255);
+
+@mixin sym-1($color) {
+  content: '1';
+  color: $color;
+}
+
+@mixin sym-2($color) {
+  content: '2';
+  color: $color;
+}
+
+@mixin sym-3($color) {
+  content: '3';
+  color: $color;
+}
+
+@mixin sym-4($color) {
+  content: '5';
+  color: $color;
+}
+
+@mixin sym-5($color) {
+  content: '5';
+  color: $color;
+}
+
+@mixin sym-6($color) {
+  content: '6';
+  color: $color;
+}
+
+div.piece {
+  display: inline-block;
+  background-color: black;
+  height: 5rem;
+  width: 5rem;
+}
+
+@for $color from 1 to 7 {
+  div.piece.p1#{$color}::after {
+    @include sym-1(nth($colors, $color));
+  }
+
+  div.piece.p2#{$color}::after {
+    @include sym-2(nth($colors, $color));
+  }
+
+  div.piece.p3#{$color}::after {
+    @include sym-3(nth($colors, $color));
+  }
+
+  div.piece.p4#{$color}::after {
+    @include sym-4(nth($colors, $color));
+  }
+
+  div.piece.p5#{$color}::after {
+    @include sym-5(nth($colors, $color));
+  }
+
+  div.piece.p6#{$color}::after {
+    @include sym-6(nth($colors, $color));
+  }
+}
