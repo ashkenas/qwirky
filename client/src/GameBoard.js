@@ -10,7 +10,8 @@ const buildBoard = (board, pieces, seen, x, y) => {
   col.set(y, true);
   seen.set(x, col);
   if (!board) return pieces.push(<Placement key={`${x},${y}`} x={x} y={y} />);
-  pieces.push(<Gamepiece key={`${x},${y}`} value={board.val} x={x} y={y} />);
+  pieces.push(<Gamepiece key={`${x},${y}`} value={board.val} x={x} y={y}
+    canRemove={board.canRemove} />);
   buildBoard(board.right, pieces, seen, x + 1, y);
   buildBoard(board.left, pieces, seen, x - 1, y);
   buildBoard(board.up, pieces, seen, x, y + 1);

@@ -57,6 +57,10 @@ div.piece {
   width: 5rem;
 }
 
+div.piece.removable {
+  background-color: #444444;
+};
+
 div.piece::after, div.piece::before {
   content: '';
   position: absolute;
