@@ -2,40 +2,64 @@ $colors: rgb(255, 0, 0), rgb(255, 200, 0), rgb(251, 255, 0),
   rgb(0, 255, 0), rgb(0, 0, 255), rgb(255, 0, 255);
 
 @mixin sym-1($color) {
-  content: '1';
-  color: $color;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  background-color: $color;
 }
 
 @mixin sym-2($color) {
-  content: '2';
-  color: $color;
+  @include sym-1($color);
+  border-radius: 200000px;
 }
 
 @mixin sym-3($color) {
-  content: '3';
-  color: $color;
+  @include sym-1($color);
+  transform: rotate(45deg) scale(.75);
 }
 
-@mixin sym-4($color) {
-  content: '5';
-  color: $color;
+@mixin sym-4($color, $angle) {
+  top: 20%;
+  left: 40%;
+  width: 20%;
+  height: 60%;
+  transform: rotate($angle);
+  border-radius: 200000px;
+  background-color: $color;
 }
 
-@mixin sym-5($color) {
-  content: '5';
-  color: $color;
+@mixin sym-5($color, $angle) {
+  background-color: $color;
+  top: 35%;
+  left: 20%;
+  width: 60%; 
+  height: 30%;
+  transform: rotate($angle) skewX(60deg) scale(.8);
 }
 
 @mixin sym-6($color) {
   content: '6';
-  color: $color;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  box-sizing: border-box;
+  border: .5rem solid $color;
 }
 
 div.piece {
+  border: 1px solid white;
+  position: relative;
   display: inline-block;
   background-color: black;
   height: 5rem;
   width: 5rem;
+}
+
+div.piece::after, div.piece::before {
+  content: '';
+  position: absolute;
 }
 
 @for $color from 1 to 7 {
@@ -52,11 +76,19 @@ div.piece {
   }
 
   div.piece.p4#{$color}::after {
-    @include sym-4(nth($colors, $color));
+    @include sym-4(nth($colors, $color), 0);
+  }
+
+  div.piece.p4#{$color}::before {
+    @include sym-4(nth($colors, $color), 90deg);
   }
 
   div.piece.p5#{$color}::after {
-    @include sym-5(nth($colors, $color));
+    @include sym-5(nth($colors, $color), 30deg);
+  }
+
+  div.piece.p5#{$color}::before {
+    @include sym-5(nth($colors, $color), 120deg);
   }
 
   div.piece.p6#{$color}::after {
