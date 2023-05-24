@@ -49,16 +49,19 @@ $colors: rgb(255, 0, 0), rgb(255, 200, 0), rgb(251, 255, 0),
 
 div.piece {
   position: absolute;
-  border: 1px solid white;
   display: inline-block;
   background-color: black;
   height: 5rem;
   width: 5rem;
 }
 
-div.piece.removable {
+div.piece.removeable {
   background-color: #444444;
 };
+
+div.piece.selected {
+  border: 3px solid red;
+}
 
 div.piece::after, div.piece::before {
   content: '';
