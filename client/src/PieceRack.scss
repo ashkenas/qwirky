@@ -1,0 +1,12 @@
+.rack {
+    position: fixed;
+    bottom: 1rem;
+    height: 5rem;
+    width: 30rem;
+    left: calc(50vw - 15rem);
+
+    .piece {
+        position: relative;
+        display: inline-block;
+    }
+}
