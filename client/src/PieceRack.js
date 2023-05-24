@@ -9,7 +9,8 @@ export default function PieceRack() {
   return (
     <div className="rack">
       {pieces.map((val, x) =>
-        <Gamepiece key={x} value={val} x={0} y={0} selected={x === selected} />
+        <Gamepiece key={x} value={val} x={x}
+          selected={x === selected} racked />
       )}
     </div>
   );

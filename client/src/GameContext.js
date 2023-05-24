@@ -82,6 +82,8 @@ export const gameReducer = (state, action) => {
     newState.map.get(x).delete(y);
 
     return newState;
+  } else if (action.type === 'select') {
+    return { ...state, selected: action.x };
   }
   console.error(`Invalid action '${action && action.type}'.`);
   return { ...state };
@@ -97,4 +99,9 @@ export const pickup = (x, y) => ({
   type: 'pickup',
   x: x,
   y: y
+});
+
+export const select = (x) => ({
+  type: 'select',
+  x: x
 });
