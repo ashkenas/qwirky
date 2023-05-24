@@ -49,8 +49,8 @@ $colors: rgb(255, 0, 0), rgb(255, 200, 0), rgb(251, 255, 0),
 }
 
 div.piece {
+  position: absolute;
   border: 1px solid white;
-  position: relative;
   display: inline-block;
   background-color: black;
   height: 5rem;

@@ -1,0 +1,33 @@
+const p00 = { val: 0x11 };
+const p10 = { val: 0x12 };
+const p20 = { val: 0x13 };
+const p21 = { val: 0x23 };
+const p22 = { val: 0x33 };
+const p23 = { val: 0x43 };
+const p24 = { val: 0x53 };
+const p2n1 = { val: 0x63 };
+const p30 = { val: 0x14 };
+const pn10 = { val: 0x15 };
+const pn20 = { val: 0x16 };
+
+pn10.left = pn20;
+pn20.right = pn10;
+p00.left = pn10;
+p00.right = p10;
+p10.left = p00;
+p10.right = p20;
+p20.left = p10;
+p20.right = p30;
+p20.up = p21;
+p20.down = p2n1;
+p2n1.up = p20;
+p21.down = p20;
+p21.up = p22;
+p22.down = p21;
+p22.up = p23;
+p23.down = p22;
+p23.up = p24;
+p24.down = p23;
+p30.left = p20;
+
+export default p00;

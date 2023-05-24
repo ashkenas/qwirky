@@ -2,9 +2,10 @@ import './App.css';
 import GameBoard from './GameBoard';
 import { GameProvider } from './GameContext';
 import './Gamepiece.scss';
+import demoBoard from './demoBoard';
 
 const initialState = {
-  board: null,
+  board: demoBoard,
   turn: true,
   pieces: []
 };
