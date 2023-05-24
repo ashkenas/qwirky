@@ -1,13 +1,10 @@
 import { createContext, useReducer } from "react";
 
-export const gameReducer = (state, action) => {
-    console.error(`Invalid action '${action && action.type}'.`);
-    return { ...state, pieces: [...state.pieces] };
-};
-
 export const GameContext = createContext({
     board: null,
+    map: new Map(),
     turn: true,
+    selected: 0,
     pieces: []
 });
 
@@ -24,3 +21,52 @@ export function GameProvider({ children, initialState }) {
         </GameContext.Provider>
     );
 };
+
+export const gameReducer = (state, action) => {
+    if (action.type === 'placePiece') {
+        const val = state.pieces[state.selected];
+        const { x, y } = action;
+        if (!state.turn || !val || state.map.get(x)?.get(y))
+            return { ...state };
+
+        const newState = {
+            ...state,
+            selected: 0,
+            turn: false,
+            pieces: [...state.pieces]
+        };
+        newState.pieces.splice(state.selected, 1);
+
+        const left = newState.map.get(x - 1)?.get(y);
+        const right = newState.map.get(x + 1)?.get(y);
+        const up = newState.map.get(x)?.get(y + 1);
+        const down = newState.map.get(x)?.get(y - 1);
+
+        const piece = {
+            val: val,
+            left: left,
+            right: right,
+            up: up,
+            down: down
+        };
+
+        if (left) left.right = piece;
+        if (right) right.left = piece;
+        if (up) up.down = piece;
+        if (down) down.up = piece;
+
+        const col = newState.map.get(x) || new Map();
+        col.set(y, piece);
+        newState.map.set(x, col);
+
+        return newState;
+    }
+    console.error(`Invalid action '${action && action.type}'.`);
+    return { ...state };
+};
+
+export const placePiece = (x, y) => ({
+    type: 'placePiece',
+    x: x,
+    y: y
+});

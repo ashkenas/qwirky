@@ -1,11 +1,10 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { GameContext } from "./GameContext";
 import Gamepiece from "./Gamepiece";
 import "./PieceRack.scss";
 
 export default function PieceRack() {
-  const { pieces } = useContext(GameContext);
-  const [selected, setSelected] = useState(-1);
+  const { pieces, selected } = useContext(GameContext);
 
   return (
     <div className="rack">

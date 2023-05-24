@@ -2,13 +2,14 @@ import { useContext, useEffect, useRef } from "react";
 import { GameContext } from "./GameContext";
 import Gamepiece from "./Gamepiece";
 import "./Gameboard.scss";
+import Placement from "./Placement";
 
 const buildBoard = (board, pieces, seen, x, y) => {
-  if (!board) return;
   if (seen.get(x)?.get(y)) return;
   const col = seen.get(x) || new Map();
   col.set(y, true);
   seen.set(x, col);
+  if (!board) return pieces.push(<Placement key={`${x},${y}`} x={x} y={y} />);
   pieces.push(<Gamepiece key={`${x},${y}`} value={board.val} x={x} y={y} />);
   buildBoard(board.right, pieces, seen, x + 1, y);
   buildBoard(board.left, pieces, seen, x - 1, y);
@@ -31,6 +32,7 @@ export default function GameBoard() {
 
   useEffect(() => {
     if (!centerRef.current || ! boardRef.current) return;
+    const boardElement = boardRef.current;
     const listener = (e) => {
       if (e instanceof MouseEvent && e.buttons !== 1) return;
       let [x, y] = coords.current;
@@ -39,8 +41,8 @@ export default function GameBoard() {
       centerRef.current.style.setProperty('--offset-y', `${y}px`);
     };
     boardRef.current.addEventListener('mousemove', listener);
-    return () => boardRef.current.removeEventListener('mousemove', listener);
-  }, [centerRef.current, boardRef.current, coords.current]);
+    return () => boardElement.removeEventListener('mousemove', listener);
+  }, []);
 
   return (
     <div className="game-board" ref={boardRef}>
