@@ -57,6 +57,13 @@ export const gameReducer = (state, action) => {
     newState.placed.push(piece);
 
     // Validate piece placement
+    let sameX = true, sameY = true;
+    for (const p of state.placed) {
+      sameX &&= p.x === x;
+      sameY &&= p.y === y;
+    }
+    if (!sameX && !sameY) return { ...state };
+
     for (const dirs of [['up', 'down'], ['left', 'right']]) {
       let sameA = true, sameB = true;
       for (const dir of dirs) {

@@ -7,7 +7,7 @@ import Placement from "./Placement";
 const distSq = (t1, t2) =>
   ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);
 
-const buildBoard = (board, pieces, seen, x, y, moving) => {
+const buildBoard = (board, pieces, seen, x, y) => {
   if (seen.get(x)?.get(y)) return;
   const col = seen.get(x) || new Map();
   col.set(y, true);
