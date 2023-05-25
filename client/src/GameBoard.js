@@ -4,6 +4,9 @@ import Gamepiece from "./Gamepiece";
 import "./Gameboard.scss";
 import Placement from "./Placement";
 
+const distSq = (t1, t2) =>
+  ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);
+
 const buildBoard = (board, pieces, seen, x, y) => {
   if (seen.get(x)?.get(y)) return;
   const col = seen.get(x) || new Map();
@@ -22,7 +25,7 @@ export default function GameBoard() {
   const { board } = useContext(GameContext);
   const centerRef = useRef(null);
   const boardRef = useRef(null);
-  const coords = useRef([0, 0]);
+  const coords = useRef([0, 0, 1]);
 
   const pieces = [];
   const seen = new Map();
@@ -34,15 +37,43 @@ export default function GameBoard() {
   useEffect(() => {
     if (!centerRef.current || ! boardRef.current) return;
     const boardElement = boardRef.current;
-    const listener = (e) => {
+    let lastTouches = null;
+    const move = (e) => {
       if (e instanceof MouseEvent && e.buttons !== 1) return;
-      let [x, y] = coords.current;
-      [x, y] = coords.current = [x - e.movementX, y - e.movementY];
+      e.preventDefault();
+      const scale = coords.current[2];
+      const x = coords.current[0] += e.movementX / scale;
+      const y = coords.current[1] += e.movementY / scale;
       centerRef.current.style.setProperty('--offset-x', `${x}px`);
       centerRef.current.style.setProperty('--offset-y', `${y}px`);
     };
-    boardRef.current.addEventListener('mousemove', listener);
-    return () => boardElement.removeEventListener('mousemove', listener);
+    const touchListener = (e) => {
+      if (lastTouches && lastTouches.length === e.touches.length) {
+        if (e.touches.length === 1) {
+          e.movementX = e.touches[0].pageX - lastTouches[0].pageX;
+          e.movementY = e.touches[0].pageY - lastTouches[0].pageY;
+          move(e);
+        } else {
+          e.preventDefault();
+          if (e.touches.length === 2) {
+            const r = Math.sqrt(distSq(...e.touches) / distSq(...lastTouches));
+            const newScale = coords.current[2] * r;
+            if (newScale > .2 && newScale < 5) coords.current[2] = newScale;
+            centerRef.current.style.setProperty('--scale', coords.current[2]);
+          }
+        }
+      }
+      lastTouches = e.touches;
+    };
+    const endTouchListener = (e) => lastTouches = null;
+    boardRef.current.addEventListener('mousemove', move);
+    boardRef.current.addEventListener('touchmove', touchListener);
+    boardRef.current.addEventListener('touchend', endTouchListener);
+    return () => {
+      boardElement.removeEventListener('mousemove', move);
+      boardElement.removeEventListener('touchmove', touchListener);
+      boardElement.removeEventListener('touchend', endTouchListener);
+    };
   }, []);
 
   return (

@@ -11,7 +11,7 @@ export default function Gamepiece({ value, x, y, canRemove, selected, racked }) 
   const onClick = useCallback(() => {
     if (racked)
       return dispatch(select(x));
-  }, [x, dispatch]);
+  }, [x, racked, dispatch]);
 
   return (
     <div className={classes.join(' ')} onClick={onClick}
