@@ -74,6 +74,7 @@ export default function GameBoard() {
       lastTouches = e.touches;
     };
     const endTouchListener = (e) => {
+      setMoving(false);
       lastTouches = null;
     };
     boardRef.current.addEventListener('touchmove', touchListener);
@@ -82,7 +83,7 @@ export default function GameBoard() {
       boardElement.removeEventListener('touchmove', touchListener);
       boardElement.removeEventListener('touchend', endTouchListener);
     };
-  }, [move]);
+  }, [move, setMoving]);
 
   return (
     <div className="game-board" ref={boardRef} onMouseMove={move}
