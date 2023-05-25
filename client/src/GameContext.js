@@ -32,7 +32,7 @@ export const gameReducer = (state, action) => {
 
     const newState = {
       ...state,
-      selected: 0,
+      selected: Math.min(state.pieces.length - 2, state.selected),
       pieces: [...state.pieces],
       placed: [...state.placed]
     };

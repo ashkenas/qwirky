@@ -60,7 +60,8 @@ div.piece.removeable {
 };
 
 div.piece.selected {
-  border: 3px solid red;
+  // border: 3px solid red;
+  transform: translateY(-.5rem);
 }
 
 div.piece::after, div.piece::before {

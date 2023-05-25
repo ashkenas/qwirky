@@ -8,6 +8,7 @@
   .piece {
     position: relative;
     display: inline-block;
+    transition: .25s transform;
   }
 
   .undo {
