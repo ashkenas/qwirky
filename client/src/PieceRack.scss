@@ -9,4 +9,15 @@
     position: relative;
     display: inline-block;
   }
+
+  .undo {
+    position: absolute;
+    top: .5rem;
+    left: calc(100% + 1rem);
+    width: 4rem;
+    height: 4rem;
+    background: black;
+    color: white;
+    &::after { content: 'undo' }
+  }
 }

@@ -10,6 +10,7 @@ const initialState = {
   map: demoMap,
   turn: true,
   pieces: [0x11, 0x12, 0x13, 0x14, 0x15, 0x16],
+  placed: [],
   selected: 0
 };
 

@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react";
-import { GameDispatchContext, pickup, select } from "./GameContext";
+import { GameDispatchContext, select } from "./GameContext";
 
 export default function Gamepiece({ value, x, y, canRemove, selected, racked }) {
   const dispatch = useContext(GameDispatchContext);
@@ -11,9 +11,7 @@ export default function Gamepiece({ value, x, y, canRemove, selected, racked }) 
   const onClick = useCallback(() => {
     if (racked)
       return dispatch(select(x));
-    if (!canRemove) return;
-    dispatch(pickup(x, y));
-  }, [x, y, dispatch]);
+  }, [x, dispatch]);
 
   return (
     <div className={classes.join(' ')} onClick={onClick}

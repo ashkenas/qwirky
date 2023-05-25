@@ -5,7 +5,8 @@ export const GameContext = createContext({
   map: new Map(),
   turn: true,
   selected: 0,
-  pieces: []
+  pieces: [],
+  placed: []
 });
 
 export const GameDispatchContext = createContext(null);
@@ -32,7 +33,8 @@ export const gameReducer = (state, action) => {
     const newState = {
       ...state,
       selected: 0,
-      pieces: [...state.pieces]
+      pieces: [...state.pieces],
+      placed: [...state.placed]
     };
     newState.pieces.splice(state.selected, 1);
 
@@ -47,8 +49,12 @@ export const gameReducer = (state, action) => {
       left: left,
       right: right,
       up: up,
-      down: down
+      down: down,
+      x: x,
+      y: y
     };
+
+    newState.placed.push(piece);
 
     // Validate piece placement
     for (const dirs of [['up', 'down'], ['left', 'right']]) {
@@ -76,25 +82,20 @@ export const gameReducer = (state, action) => {
 
     return newState;
   } else if (action.type === 'pickup') {
-    const { x, y } = action;
-    const val = state.map.get(x)?.get(y).val;
-    if (!val) return { ...state };
-
     const newState = {
       ...state,
-      pieces: [...state.pieces, val]
+      pieces: [...state.pieces, ...state.placed.map(p => p.val)],
+      placed: []
     };
 
-    const left = newState.map.get(x - 1)?.get(y);
-    const right = newState.map.get(x + 1)?.get(y);
-    const up = newState.map.get(x)?.get(y + 1);
-    const down = newState.map.get(x)?.get(y - 1);
-    if (left) left.right = null;
-    if (right) right.left = null;
-    if (up) up.down = null;
-    if (down) down.up = null;
-
-    newState.map.get(x).delete(y);
+    for (const piece of state.placed) {
+      if (piece.left) piece.left.right = null;
+      if (piece.right) piece.right.left = null;
+      if (piece.up) piece.up.down = null;
+      if (piece.down) piece.down.up = null;
+  
+      newState.map.get(piece.x)?.delete(piece.y);
+    }
 
     return newState;
   } else if (action.type === 'select') {
@@ -110,10 +111,8 @@ export const placePiece = (x, y) => ({
   y: y
 });
 
-export const pickup = (x, y) => ({
-  type: 'pickup',
-  x: x,
-  y: y
+export const pickup = () => ({
+  type: 'pickup'
 });
 
 export const select = (x) => ({
