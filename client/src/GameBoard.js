@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { GameContext } from "./GameContext";
 import Gamepiece from "./Gamepiece";
 import "./Gameboard.scss";
@@ -7,7 +7,7 @@ import Placement from "./Placement";
 const distSq = (t1, t2) =>
   ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);
 
-const buildBoard = (board, pieces, seen, x, y) => {
+const buildBoard = (board, pieces, seen, x, y, moving) => {
   if (seen.get(x)?.get(y)) return;
   const col = seen.get(x) || new Map();
   col.set(y, true);
@@ -26,6 +26,7 @@ export default function GameBoard() {
   const centerRef = useRef(null);
   const boardRef = useRef(null);
   const coords = useRef([0, 0, 1]);
+  const [moving, setMoving] = useState(false);
 
   const pieces = [];
   const seen = new Map();
@@ -34,19 +35,26 @@ export default function GameBoard() {
     buildBoard(board, pieces, seen, 0, 0);
   }
 
+  const move = useCallback((e) => {
+    if (e.nativeEvent instanceof MouseEvent && e.buttons !== 1) return;
+    setMoving(true);
+    const scale = coords.current[2];
+    const x = coords.current[0] += e.movementX / scale;
+    const y = coords.current[1] += e.movementY / scale;
+    centerRef.current.style.setProperty('--offset-x', `${x}px`);
+    centerRef.current.style.setProperty('--offset-y', `${y}px`);
+  }, [setMoving]);
+
+  const doneMoving = useCallback((e) => {
+    if (!moving) return;
+    e.stopPropagation();
+    setMoving(false);
+  }, [moving, setMoving]);
+
   useEffect(() => {
     if (!centerRef.current || ! boardRef.current) return;
     const boardElement = boardRef.current;
     let lastTouches = null;
-    const move = (e) => {
-      if (e instanceof MouseEvent && e.buttons !== 1) return;
-      e.preventDefault();
-      const scale = coords.current[2];
-      const x = coords.current[0] += e.movementX / scale;
-      const y = coords.current[1] += e.movementY / scale;
-      centerRef.current.style.setProperty('--offset-x', `${x}px`);
-      centerRef.current.style.setProperty('--offset-y', `${y}px`);
-    };
     const touchListener = (e) => {
       if (lastTouches && lastTouches.length === e.touches.length) {
         if (e.touches.length === 1) {
@@ -65,19 +73,20 @@ export default function GameBoard() {
       }
       lastTouches = e.touches;
     };
-    const endTouchListener = (e) => lastTouches = null;
-    boardRef.current.addEventListener('mousemove', move);
+    const endTouchListener = (e) => {
+      lastTouches = null;
+    };
     boardRef.current.addEventListener('touchmove', touchListener);
     boardRef.current.addEventListener('touchend', endTouchListener);
     return () => {
-      boardElement.removeEventListener('mousemove', move);
       boardElement.removeEventListener('touchmove', touchListener);
       boardElement.removeEventListener('touchend', endTouchListener);
     };
   }, []);
 
   return (
-    <div className="game-board" ref={boardRef}>
+    <div className="game-board" ref={boardRef} onMouseMove={move}
+      onClickCapture={doneMoving}>
       <div className="center-piece" ref={centerRef}>
         {pieces};
       </div>
