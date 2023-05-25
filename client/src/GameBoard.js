@@ -82,7 +82,7 @@ export default function GameBoard() {
       boardElement.removeEventListener('touchmove', touchListener);
       boardElement.removeEventListener('touchend', endTouchListener);
     };
-  }, []);
+  }, [move]);
 
   return (
     <div className="game-board" ref={boardRef} onMouseMove={move}
