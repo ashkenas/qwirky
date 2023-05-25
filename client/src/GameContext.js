@@ -50,6 +50,21 @@ export const gameReducer = (state, action) => {
       down: down
     };
 
+    // Validate piece placement
+    for (const dirs of [['up', 'down'], ['left', 'right']]) {
+      let sameA = true, sameB = true;
+      for (const dir of dirs) {
+        let current = piece;
+        while (current[dir]) {
+          if (current[dir].val === val) return { ...state };
+          current = current[dir];
+          sameA &&= (current.val & 0xF) === (val & 0xF);
+          sameB &&= (current.val & 0xF0) === (val & 0xF0);
+        }
+      }
+      if (!sameA && !sameB) return { ...state };
+    }
+
     if (left) left.right = piece;
     if (right) right.left = piece;
     if (up) up.down = piece;

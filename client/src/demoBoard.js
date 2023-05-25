@@ -13,6 +13,7 @@ const pn10 = { val: 0x15 };
 const pn20 = { val: 0x16 };
 
 pn10.left = pn20;
+pn10.right = p00; 
 pn20.right = pn10;
 p00.left = pn10;
 p00.right = p10;
