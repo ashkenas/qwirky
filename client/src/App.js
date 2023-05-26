@@ -1,9 +1,9 @@
 import './App.css';
 import Home from './Home';
-import { GameProvider } from './GameContext';
 import './Gamepiece.scss';
 import { demoBoard, demoMap } from './demoBoard';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './firebase';
 
 const initialState = {
   board: demoBoard,
@@ -23,9 +23,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <GameProvider initialState={initialState}>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </GameProvider>
+    </AuthProvider>
   );
 }
 
