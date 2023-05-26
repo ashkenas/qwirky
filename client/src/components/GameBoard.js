@@ -1,8 +1,8 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { GameContext } from "./GameContext";
+import { GameContext } from "../contexts/GameContext";
 import Gamepiece from "./Gamepiece";
-import "./Gameboard.scss";
 import Placement from "./Placement";
+import "../styles/Gameboard.scss";
 
 const distSq = (t1, t2) =>
   ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);

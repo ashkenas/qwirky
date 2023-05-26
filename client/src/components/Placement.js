@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
-import { GameDispatchContext, placePiece } from "./GameContext";
-import "./Placement.scss";
+import { GameDispatchContext, placePiece } from "../contexts/GameContext";
+import "../styles/Placement.scss";
 
 export default function Placement({ x, y }) {
   const dispatch = useContext(GameDispatchContext);

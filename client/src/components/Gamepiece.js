@@ -1,5 +1,6 @@
 import { useCallback, useContext } from "react";
-import { GameDispatchContext, select } from "./GameContext";
+import { GameDispatchContext, select } from "../contexts/GameContext";
+import "../styles/Gamepiece.scss";
 
 export default function Gamepiece({ value, x, y, canRemove, selected, racked }) {
   const dispatch = useContext(GameDispatchContext);

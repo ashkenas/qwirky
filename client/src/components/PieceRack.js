@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { GameContext, GameDispatchContext, pickup } from "./GameContext";
+import { GameContext, GameDispatchContext, pickup } from "../contexts/GameContext";
 import Gamepiece from "./Gamepiece";
-import "./PieceRack.scss";
+import "../styles/PieceRack.scss";
 
 export default function PieceRack() {
   const { pieces, selected } = useContext(GameContext);
