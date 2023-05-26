@@ -1,9 +1,9 @@
 import './App.css';
-import GameBoard from './GameBoard';
+import Home from './Home';
 import { GameProvider } from './GameContext';
 import './Gamepiece.scss';
-import PieceRack from './PieceRack';
 import { demoBoard, demoMap } from './demoBoard';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 const initialState = {
   board: demoBoard,
@@ -14,11 +14,17 @@ const initialState = {
   selected: 0
 };
 
+const router = createBrowserRouter([
+  {
+    element: <Home />,
+    path: '/'
+  }
+]);
+
 function App() {
   return (
     <GameProvider initialState={initialState}>
-      <GameBoard />
-      <PieceRack />
+      <RouterProvider router={router} />
     </GameProvider>
   );
 }
