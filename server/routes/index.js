@@ -1,8 +1,15 @@
 import { resolve } from "path";
+import users from "../data/users.js";
+import { sync, validateUsername } from "../util.js";
 import friends from "./friends.js";
 
 export const mountRoutes = app => {
   app.use('/api/friends', friends);
+  app.post('/api/profile/username', sync (async (req, res) => {
+    const username = validateUsername(req.body.username);
+    await users.changeUsername(req.firebaseId, username);
+    res.sendStatus(200);
+  }));
   app.get('*', (_req, res) =>
     res.sendFile(resolve('./public/index.html'))
   );

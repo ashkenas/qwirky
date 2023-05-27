@@ -19,6 +19,7 @@ router.route('/:id')
     if (!req.params.id)
       throw new StatusError(400, 'Must provide an ID.');
     await users.removeFriend(req.firebaseId, req.params.id);
+    res.sendStatus(200);
   }));
 
 router.post('/accept/:id', sync(async (req, res) => {
