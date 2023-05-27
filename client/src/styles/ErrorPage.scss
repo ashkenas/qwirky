@@ -1,0 +1,38 @@
+@import "_base";
+
+.center {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+
+  .error {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 0;
+    align-items: center;
+    h1 {
+      margin: 0;
+      display: block;
+      font-size: 4rem;
+    }
+  
+    p {
+      margin: 0;
+      display: block;
+      height: 100%;
+      font-size: 1.5rem;
+    }
+  
+    a {
+      @include button($buttons);
+      margin: 1rem 0 0 0;
+      padding: 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      color: white;
+    }
+  }
+}

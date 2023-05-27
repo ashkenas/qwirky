@@ -10,7 +10,7 @@ const firebaseApp = initializeApp({
 const app = express();
 app.use(express.json());
 app.use(express.static('./public'));
-app.use('/api/*', (req, res, next) => {
+app.use('/api/*', async (req, res, next) => {
   const token = req.headers.authorization;
 
   if (token) {

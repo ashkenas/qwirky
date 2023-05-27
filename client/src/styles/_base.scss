@@ -1,0 +1,20 @@
+@use "sass:color";
+
+$buttons: #a45fb9;
+
+@mixin button($bg) {
+  background-color: $bg;
+  box-shadow: 0 3px 0 0 color.scale($bg, $blackness: 100%);
+  transition: .1s transform, .1s box-shadow, .1s background-color;
+
+  &:hover {
+    transform: translateY(1px);
+    background-color: color.scale($bg, $blackness: 10%);
+    box-shadow: 0 2px 0 0 color.scale($bg, $blackness: 100%);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 0 color.scale($bg, $blackness: 100%);
+  }
+}

@@ -1,6 +1,6 @@
 import express from "express";
 import { StatusError, sync } from "../util.js";
-import users from "../data/users.js";
+import * as users from "../data/users.js";
 
 const router = express.Router();
 

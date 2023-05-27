@@ -1,8 +1,8 @@
-import '../styles/App.css';
 import Home from './Home';
 // import { demoBoard, demoMap } from '../demoBoard';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from '../contexts/firebase';
+import ErrorPage from './ErrorPage';
 
 // const initialState = {
 //   board: demoBoard,
@@ -17,6 +17,10 @@ const router = createBrowserRouter([
   {
     element: <Home />,
     path: '/'
+  },
+  {
+    element: <ErrorPage status={404} message="Page not found." />,
+    path: '*'
   }
 ]);
 

@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import users from "../data/users.js";
+import * as users from "../data/users.js";
 import { sync, validateUsername } from "../util.js";
 import friends from "./friends.js";
 
