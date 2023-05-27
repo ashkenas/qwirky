@@ -1,5 +1,7 @@
 import { ObjectId } from "mongodb";
 
+export const sync = f => (req, res, next) => f(req, res, next).catch(next);
+
 export class StatusError extends Error {
   constructor(status, message) {
     super(message);
