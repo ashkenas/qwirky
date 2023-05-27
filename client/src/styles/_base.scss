@@ -1,6 +1,12 @@
 @use "sass:color";
 
 $buttons: #a45fb9;
+$color1: #ff0000;
+$color2: #ffc800;
+$color3: #fbff00;
+$color4: #00ff00;
+$color5: #0000ff;
+$color6: #ff00ff;
 
 @mixin button($bg) {
   background-color: $bg;

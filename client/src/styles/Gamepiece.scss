@@ -1,5 +1,6 @@
-$colors: rgb(255, 0, 0), rgb(255, 200, 0), rgb(251, 255, 0),
-  rgb(0, 255, 0), rgb(0, 0, 255), rgb(255, 0, 255);
+@use "_base";
+
+$colors: $color1, $color2, $color3, $color4, $color5, $color6;
 
 @mixin sym-1($color) {
   top: 20%;
