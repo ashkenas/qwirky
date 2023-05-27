@@ -1,3 +1,5 @@
+import { config } from "dotenv";
+config();
 import express from "express";
 import { mountRoutes } from "./routes/index.js";
 import { initializeApp, applicationDefault } from "firebase-admin/app";

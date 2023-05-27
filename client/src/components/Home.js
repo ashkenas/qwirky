@@ -1,6 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { auth, AuthContext } from "../contexts/firebase";
 import "../styles/Home.scss";
 
@@ -9,10 +9,11 @@ const googleProvider = new GoogleAuthProvider();
 export default function Home() {
   const user = useContext(AuthContext);
   const navigate = useNavigate();
+  const [params] = useSearchParams();
 
   useEffect(() => {
-    if (user) navigate('/dash');
-  }, [user]);
+    if (user) navigate(params.get('re') || '/dash');
+  }, [user, navigate, params]);
 
   return (
     <div className="container">

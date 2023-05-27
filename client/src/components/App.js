@@ -3,6 +3,8 @@ import Home from './Home';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from '../contexts/firebase';
 import ErrorPage from './ErrorPage';
+import Dashboard from './Dashboard';
+import Protect from './Protect';
 
 // const initialState = {
 //   board: demoBoard,
@@ -17,6 +19,14 @@ const router = createBrowserRouter([
   {
     element: <Home />,
     path: '/'
+  },
+  {
+    element: (
+      <Protect>
+        <Dashboard />
+      </Protect>
+    ),
+    path: '/dash'
   },
   {
     element: <ErrorPage status={404} message="Page not found." />,
