@@ -18,7 +18,7 @@ export const getUserByUid = async uid => {
     if (!res.acknowledged || !res.insertedId)
       throw new Error('Failed to create new user.');
 
-    return await getUserByUID(user);
+    return await getUserByUid(user);
   }
   return user;
 };
