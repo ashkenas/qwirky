@@ -4,23 +4,23 @@ import * as users from "../data/users.js";
 
 const router = express.Router();
 
-router.get('/', sync(async (req, res) => {
-  res.json(await users.getFriends(req.firebaseId));
-}));
-
-router.route('/:id')
-  .post(sync(async (req, res) => {
-    if (!req.params.id)
-      throw new StatusError(400, 'Must provide a username.');
-    await users.makeFriendRequest(req.firebaseId, req.params.id.trim());
-    res.sendStatus(200);
+router.route('/')
+  .get(sync(async (req, res) => {
+    res.json(await users.getFriends(req.firebaseId));
   }))
-  .delete(sync(async (req, res) => {
-    if (!req.params.id)
-      throw new StatusError(400, 'Must provide an ID.');
-    await users.removeFriend(req.firebaseId, req.params.id);
+  .post(sync(async (req, res) => {
+    if (!req.body.username)
+      throw new StatusError(400, 'Must provide a username.');
+    await users.makeFriendRequest(req.firebaseId, req.body.username.trim());
     res.sendStatus(200);
   }));
+
+router.delete('/:id', sync(async (req, res) => {
+  if (!req.params.id)
+    throw new StatusError(400, 'Must provide an ID.');
+  await users.removeFriend(req.firebaseId, req.params.id);
+  res.sendStatus(200);
+}));
 
 router.post('/accept/:id', sync(async (req, res) => {
   if (!req.params.id)

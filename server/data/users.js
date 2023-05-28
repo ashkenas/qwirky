@@ -26,7 +26,7 @@ export const getUserByUid = async uid => {
 export const getUserById = async id => {
   const col = await users();
   return await col.findOne({
-    id: forceObjectId(id)
+    _id: forceObjectId(id)
   });
 };
 
@@ -57,7 +57,7 @@ export const changeUsername = async (uid, username) => {
 export const getFriends = async uid => {
   const user = await getUserByUid(uid);
   const col = await users();
-  const cursor = col.aggregate([
+  const cursorFriends = col.aggregate([
     { $match: { _id: user._id } },
     { $project: { friends: 1, _id: 0 } },
     { $unwind: '$friends' },
@@ -73,7 +73,26 @@ export const getFriends = async uid => {
     { $replaceRoot: { newRoot: '$friends' } },
     { $project: { username: 1 } }
   ]);
-  return await cursor.toArray();
+  const cursorRequests = col.aggregate([
+    { $match: { _id: user._id } },
+    { $project: { requests: 1, _id: 0 } },
+    { $unwind: '$requests' },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'requests',
+        foreignField: '_id',
+        as: 'requests'
+      }
+    },
+    { $unwind: '$requests' },
+    { $replaceRoot: { newRoot: '$requests' } },
+    { $project: { username: 1 } }
+  ]);
+  return {
+    friends: await cursorFriends.toArray(),
+    requests: await cursorRequests.toArray()
+  };
 };
 
 export const makeFriendRequest = async (uid, username) => {
