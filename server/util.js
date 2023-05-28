@@ -20,7 +20,7 @@ export const forceObjectId = id => {
 export const validateUsername = username => {
   if (typeof username !== 'string' || !(username = username.trim()))
     throw new StatusError(400, 'Must provide a valid username.');
-  if (!username.test(/[a-zA-Z0-9]{6,}/))
-    throw new StatusError(400, 'Username must be alphanumeric and 6 or more characters long.');
+  if (!(/[a-zA-Z0-9]{6,20}/).test(username))
+    throw new StatusError(400, 'Username must be alphanumeric and 6 to 20 characters long.');
   return username.toLowerCase();
 };

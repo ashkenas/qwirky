@@ -40,10 +40,15 @@ export const getUserByUsername = async name => {
 export const changeUsername = async (uid, username) => {
   username = validateUsername(username);
   const user = await getUserByUid(uid);
+  if (user.username === username) return;
   const col = await users();
+  const test = await col.findOne({
+    username: username
+  });
+  if (test) throw new Error(400, 'Username taken already.');
   const res = await col.updateOne(
     { _id: user._id },
-    { username: username }
+    { $set: { username: username } }
   );
   if (!res.acknowledged)
     throw new Error('Failed to update username.');
