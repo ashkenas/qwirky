@@ -5,6 +5,13 @@ import friends from "./friends.js";
 
 export const mountRoutes = app => {
   app.use('/api/friends', friends);
+  app.get('/api/profile', sync (async (req, res) => {
+    const user = await users.getUserByUid(req.firebaseId);
+    res.json({
+      username: user.username,
+      games: user.games
+    });
+  }));
   app.post('/api/profile/username', sync (async (req, res) => {
     const username = validateUsername(req.body.username);
     await users.changeUsername(req.firebaseId, username);

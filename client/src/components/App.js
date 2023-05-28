@@ -5,6 +5,8 @@ import { AuthProvider } from '../contexts/firebase';
 import ErrorPage from './ErrorPage';
 import Dashboard from './Dashboard';
 import Protect from './Protect';
+import Friends from './Friends';
+import NewGame from './NewGame';
 
 // const initialState = {
 //   board: demoBoard,
@@ -27,6 +29,22 @@ const router = createBrowserRouter([
       </Protect>
     ),
     path: '/dash'
+  },
+  {
+    element: (
+      <Protect>
+        <Friends />
+      </Protect>
+    ),
+    path: '/friends'
+  },
+  {
+    element: (
+      <Protect>
+        <NewGame />
+      </Protect>
+    ),
+    path: '/new'
   },
   {
     element: <ErrorPage status={404} message="Page not found." />,

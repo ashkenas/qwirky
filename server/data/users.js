@@ -18,7 +18,7 @@ export const getUserByUid = async uid => {
     if (!res.acknowledged || !res.insertedId)
       throw new Error('Failed to create new user.');
 
-    return await getUserByUid(user);
+    return await getUserByUid(uid);
   }
   return user;
 };
@@ -50,8 +50,25 @@ export const changeUsername = async (uid, username) => {
 }
 
 export const getFriends = async uid => {
-  // TODO
-  return [];
+  const user = await getUserByUid(uid);
+  const col = await users();
+  const cursor = col.aggregate([
+    { $match: { _id: user._id } },
+    { $project: { friends: 1, _id: 0 } },
+    { $unwind: '$friends' },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'friends',
+        foreignField: '_id',
+        as: 'friends'
+      }
+    },
+    { $unwind: '$friends' },
+    { $replaceRoot: { newRoot: '$friends' } },
+    { $project: { username: 1 } }
+  ]);
+  return await cursor.toArray();
 };
 
 export const makeFriendRequest = async (uid, username) => {

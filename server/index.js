@@ -18,8 +18,11 @@ app.use('/api/*', async (req, res, next) => {
   if (token) {
     try {
       const { uid } = await getAuth(firebaseApp).verifyIdToken(token, true);
-      req.firebaseId = uid;
-      next();
+      if (uid) {
+        req.firebaseId = uid;
+        return next();
+      }
+      res.status(500).json({ error: 'Unable to verify identity. Please try again.' });
     } catch (e) {
       console.error(e);
       res.status(401).json({ error: 'Unauthenticated. Bad token provided.' });

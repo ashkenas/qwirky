@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import ErrorPage from "./components/ErrorPage";
 import { auth, AuthContext } from "./contexts/firebase";
 
-export async function useData(url) {
+export function useData(url) {
   const user = useContext(AuthContext);
   const [state, setState] = useState({
     data: null,
@@ -13,11 +13,17 @@ export async function useData(url) {
   useEffect(() => {
     if (!user) return setState({
       data: null,
-      error: false,
+      error: <ErrorPage status={401}
+        message={"You must be logged in to view this page."} />,
       loading: false
     });
     let abort = false;
     auth.currentUser?.getIdToken().then(async token => {
+      setState({
+        data: null,
+        error: false,
+        loading: true
+      });
       const res = await fetch(url, {
         headers: {
           'Authorization': token
@@ -33,11 +39,11 @@ export async function useData(url) {
       setState({
         data: await res.json(),
         error: false,
-        loading: true
+        loading: false
       });
     });
     return () => abort = true;
-  }, [url, setState]);
+  }, [url, user, setState]);
 
   return state;
 };

@@ -6,7 +6,7 @@ export default function Protect({ children }) {
   const user = useContext(AuthContext);
   const location = useLocation();
   
-  if (!user) return <Navigate to={`/login?re=${location.pathname}`} />;
+  if (!user) return <Navigate to={`/?re=${location.pathname}`} />;
 
   return <>{children}</>;
 };
