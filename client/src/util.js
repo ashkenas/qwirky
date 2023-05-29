@@ -117,7 +117,6 @@ export function useAction(url, options = {}) {
         loading: false
       });
       if (onComplete) onComplete(data);
-      console.log('test')
     });
     return () => abort = true;
   }, [url, user, setState]);

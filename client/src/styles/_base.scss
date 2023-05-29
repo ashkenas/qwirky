@@ -1,26 +1,93 @@
 @use "sass:color";
 
+$text-color: #efefef;
 $buttons: #a45fb9;
-$color1: #ff0000;
-$color2: #ffc800;
-$color3: #fbff00;
-$color4: #00ff00;
-$color5: #0000ff;
-$color6: #ff00ff;
+$color1: #dc2727;
+$color2: #eb8b0e;
+$color3: #e8d939;
+$color4: #40ae15;
+$color5: #569CD6;
+$color6: #9d00ff;
 
 @mixin button($bg) {
   background-color: $bg;
-  box-shadow: 0 3px 0 0 color.scale($bg, $blackness: 100%);
+  box-shadow: 0 3px 0 0 color.scale($bg, $blackness: 50%);
   transition: .1s transform, .1s box-shadow, .1s background-color;
 
   &:hover {
     transform: translateY(1px);
     background-color: color.scale($bg, $blackness: 10%);
-    box-shadow: 0 2px 0 0 color.scale($bg, $blackness: 100%);
+    box-shadow: 0 2px 0 0 color.scale($bg, $blackness: 50%);
   }
 
   &:active {
     transform: translateY(3px);
-    box-shadow: 0 0 0 0 color.scale($bg, $blackness: 100%);
+    box-shadow: 0 0 0 0 color.scale($bg, $blackness: 50%);
   }
+}
+
+@mixin loading() {
+  color: transparent;
+  position: relative;
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: calc(50% - 1rem);
+    left: calc(50% - 1rem);
+    height: 2rem;
+    width: 2rem;
+    color: $text-color;
+    border-radius: 200000px;
+    border: 3px solid color.adjust($text-color, $alpha: -.5);
+    border-left: 3px solid $text-color;
+    animation: spinner .75s linear infinite forwards;
+  }
+}
+
+@keyframes spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.columns {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 auto;
+  padding: 1rem 0;
+  width: calc(960px - 4rem);
+  height: 100%;
+
+  .column {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1;
+    height: 100%;
+    
+    .column-body {
+      flex: 1;
+      overflow-y: auto;
+    }
+  }
+
+  .column:not(:last-child) {
+    margin: 0 2rem 0 0;
+  }
+}
+
+@media (max-width: 960px), screen and (orientation: portrait) {
+  .columns {
+    flex-flow: column nowrap;
+    margin: 0 2rem;
+    width: calc(100% - 4rem);
+    height: auto;
+
+    .column:not(:last-child) {
+      margin: 0 0 1rem 0;
+    }
+  }  
 }
