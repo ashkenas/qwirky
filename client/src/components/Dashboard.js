@@ -14,7 +14,11 @@ export default function Dashboard() {
     useAction('/api/profile/username', {
       method: 'post',
       onComplete: refetch,
-      onError: () => alert('Failed to update username, try again later.')
+      onError: (status, message) => {
+        if (status === 500)
+          return alert('Failed to update username, try again later.');
+        else return alert(message);
+      }
     });
 
   useEffect(() => {

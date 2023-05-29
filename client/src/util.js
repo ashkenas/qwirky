@@ -40,7 +40,11 @@ export function useData(url, options = {}) {
             message={"An error occured. Please try again later."} />),
           loading: false
         });
-        if (onError) onError();
+        let error = await res.text();
+        try {
+          error = JSON.parse(error).error;
+        } catch (e) {}
+        if (onError) onError(res.status, error);
         return;
       }
       const data = await res.json();
@@ -96,7 +100,11 @@ export function useAction(url, options = {}) {
             message={"An error occured. Please try again later."} />),
           loading: false
         });
-        if (onError) onError();
+        let error = await res.text();
+        try {
+          error = JSON.parse(error).error;
+        } catch (e) {}
+        if (onError) onError(res.status, error);
         return;
       }
       let data = await res.text();

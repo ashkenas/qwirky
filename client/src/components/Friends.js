@@ -11,7 +11,10 @@ export default function Friends() {
   const [addFriend, { loading: addLoading }] = useAction('/api/friends', {
     method: 'post',
     onComplete: () => setName(''),
-    onError: () => alert('Failed to add friend, try again later.')
+    onError: (code) => {
+      if (code === 404) alert('User does not exist.');
+      else alert('Failed to add friend, try again later.');
+    }
   });
 
   const onNameChange = useCallback((e) => {
