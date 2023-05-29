@@ -2,13 +2,16 @@ import { useCallback, useState } from "react";
 import { useAction, useData } from "../util";
 import "../styles/Friends.scss";
 import { Link } from "react-router-dom";
+import Friend from "./Friend";
 
 export default function Friends() {
   const [name, setName] = useState('');
-  const { data, error, loading } = useData('/api/friends');
-  const [addFriend, { loading: addLoading }] = useAction('/api/friends', 'post', () =>
-    setName('')
-  );
+  const { data, error, loading, refetch } = useData('/api/friends');
+  const [addFriend, { loading: addLoading }] = useAction('/api/friends', {
+    method: 'post',
+    onComplete: () => setName(''),
+    onError: () => alert('Failed to add friend, try again later.')
+  });
 
   const onNameChange = useCallback((e) => {
     setName(e.target.value);
@@ -20,7 +23,7 @@ export default function Friends() {
   }, [addLoading, addFriend, name]);
 
   if (error) return error;
-  if (loading) return "loading";
+  if (loading && !data) return "loading";
   return (
     <div className="container">
       <Link to="/dash">Back</Link>
@@ -31,7 +34,7 @@ export default function Friends() {
       <h1>Friend Requests</h1>
       {data.requests.map(f=><p>{f.username}</p>)}
       <h1>Friends</h1>
-      {data.friends.map(f=><p>{f.username}</p>)}
+      {data.friends.map(f => <Friend key={f._id} friend={f} refetch={refetch} />)}
     </div>
   );
 };

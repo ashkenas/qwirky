@@ -7,11 +7,15 @@ import { useCallback, useEffect, useState } from "react";
 export default function Dashboard() {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
-  const { data, error, loading, refetch } = useData('/api/profile', (data) =>
-    setName(data.username)
-  );
-  const [setUsername, { error: editError, loading: editLoading }] =
-    useAction('/api/profile/username', 'post', refetch);
+  const { data, error, loading, refetch } = useData('/api/profile', {
+    onComplete: (data) => setName(data.username)
+  });
+  const [setUsername, { loading: editLoading }] =
+    useAction('/api/profile/username', {
+      method: 'post',
+      onComplete: refetch,
+      onError: () => alert('Failed to update username, try again later.')
+    });
 
   useEffect(() => {
     setEditing(false);

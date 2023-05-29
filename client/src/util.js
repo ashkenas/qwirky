@@ -2,7 +2,8 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import ErrorPage from "./components/ErrorPage";
 import { auth, AuthContext } from "./contexts/firebase";
 
-export function useData(url, onComplete) {
+export function useData(url, options = {}) {
+  const { onComplete = null, onError = null } = options;
   const user = useContext(AuthContext);
   const [i, setI] = useState(0);
   const refetch = useCallback(() => setI(i + 1), [i, setI]);
@@ -32,12 +33,16 @@ export function useData(url, onComplete) {
         }
       });
       if (abort) return;
-      if (!res.ok) return setState({
-        data: state.data,
-        error: (<ErrorPage status={500}
-          message={"An error occured. Please try again later."} />),
-        loading: false
-      });
+      if (!res.ok) {
+        setState({
+          data: state.data,
+          error: (<ErrorPage status={500}
+            message={"An error occured. Please try again later."} />),
+          loading: false
+        });
+        if (onError) onError();
+        return;
+      }
       const data = await res.json();
       setState({
         data: data,
@@ -52,7 +57,8 @@ export function useData(url, onComplete) {
   return { ...state, refetch: refetch };
 };
 
-export function useAction(url, method, onComplete) {
+export function useAction(url, options = {}) {
+  const { method = 'get', onComplete = undefined, onError = undefined } = options;
   const user = useContext(AuthContext);
   const [state, setState] = useState({
     data: null,
@@ -83,12 +89,16 @@ export function useAction(url, method, onComplete) {
         }
       });
       if (abort) return;
-      if (!res.ok) return setState({
-        data: null,
-        error: (<ErrorPage status={500}
-          message={"An error occured. Please try again later."} />),
-        loading: false
-      });
+      if (!res.ok) {
+        setState({
+          data: null,
+          error: (<ErrorPage status={500}
+            message={"An error occured. Please try again later."} />),
+          loading: false
+        });
+        if (onError) onError();
+        return;
+      }
       let data = await res.text();
       try {
         data = JSON.parse(data);
