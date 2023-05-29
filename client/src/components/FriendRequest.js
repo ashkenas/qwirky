@@ -11,7 +11,7 @@ export default function FriendRequest({ friend, refetch }) {
     }
   });
   const [removeRequest, { loading: loadingRemove }] = useAction(`/api/friends/decline/${friend._id}`, {
-    method: 'delete',
+    method: 'post',
     onComplete: refetch,
     onError: () => {
       setConfirming(false);

@@ -168,3 +168,17 @@ export const removeFriend = async (uid, id) => {
   if (!res2.acknowledged)
     throw new Error('Failed to remove friend. (2)');
 };
+
+export const declineFriendRequest = async (uid, id) => {
+  const user = await getUserByUid(uid);
+  id = forceObjectId(id);
+  if (!user.requests.some(fid => fid.equals(id)))
+    throw new StatusError(404, 'Cannot decline non-existent friend request.');
+  const col = await users();
+  const res = await col.updateOne(
+    { _id: user._id },
+    { $pull: { requests: id } }
+  );
+  if (!res.acknowledged)
+    throw new Error('Failed to decline friend request.');
+};

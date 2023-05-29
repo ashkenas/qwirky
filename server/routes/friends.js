@@ -29,4 +29,11 @@ router.post('/accept/:id', sync(async (req, res) => {
   res.sendStatus(200);
 }));
 
+router.post('/decline/:id', sync(async (req, res) => {
+  if (!req.params.id)
+    throw new StatusError(400, 'Must provide an ID.');
+  await users.declineFriendRequest(req.firebaseId, req.params.id);
+  res.sendStatus(200);
+}));
+
 export default router;
