@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "sass:math";
 
 $text-color: #efefef;
 $buttons: #a45fb9;
@@ -51,6 +52,26 @@ $color6: #9d00ff;
   }
   to {
     transform: rotate(359deg);
+  }
+}
+
+$back-arrow-width: 6px;
+$back-arrow-half-width: math.div($back-arrow-width, 2);
+
+.back {
+  @include button($color5);
+  display: block;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 8px;
+  text-decoration: none;
+  
+  &::after {
+    content: 'back';
+    color:white;
   }
 }
 

@@ -11,8 +11,8 @@ export default function Friends() {
   const [addFriend, { loading: addLoading }] = useAction('/api/friends', {
     method: 'post',
     onComplete: () => setName(''),
-    onError: (code) => {
-      if (code === 404) alert('User does not exist.');
+    onError: (status, message) => {
+      if (status !== 500) alert(message);
       else alert('Failed to add friend, try again later.');
     }
   });
@@ -28,17 +28,25 @@ export default function Friends() {
 
   if (error) return error;
   if (loading && !data) return "loading";
-  return (
-    <div className="container">
-      <Link to="/dash">Back</Link>
-      <h1>Add Friend</h1>
-      <input type="text" value={name} onChange={onNameChange}
-        onBlur={onNameChange} />
-      <button onClick={clickAddFriend}>Add Friend</button>
-      <h1>Friend Requests</h1>
-      {data.requests.map(f=> <FriendRequest key={f._id} friend={f} refetch={refetch} />)}
-      <h1>Friends</h1>
-      {data.friends.map(f => <Friend key={f._id} friend={f} refetch={refetch} />)}
+  return (<>
+    <Link to="/dash" className="back" aria-label="back" />
+    <div className="columns">
+      <div className="column">
+        <h1>Add Friend</h1>
+        <div>
+          <input type="text" value={name} onChange={onNameChange}
+            onBlur={onNameChange} className="friend-input" />
+          <button onClick={clickAddFriend} className="friend-submit">
+            Add
+          </button>
+        </div>
+        <h1>Friend Requests</h1>
+        {data.requests.map(f=> <FriendRequest key={f._id} friend={f} refetch={refetch} />)}
+      </div>
+      <div className="column">
+        <h1>Friends</h1>
+        {data.friends.map(f => <Friend key={f._id} friend={f} refetch={refetch} />)}
+      </div>
     </div>
-  );
+  </>);
 };

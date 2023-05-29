@@ -56,6 +56,7 @@ export function useData(url, options = {}) {
       if (onComplete) onComplete(data);
     });
     return () => abort = true;
+  // eslint-disable-next-line
   }, [url, user, setState, i]);
 
   return { ...state, refetch: refetch };
@@ -119,6 +120,7 @@ export function useAction(url, options = {}) {
       if (onComplete) onComplete(data);
     });
     return () => abort = true;
+  // eslint-disable-next-line
   }, [url, user, setState]);
 
   return [action, state];

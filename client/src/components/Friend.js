@@ -11,15 +11,17 @@ export default function Friend({ friend, refetch }) {
       alert(`Could not delete friend '${friend.username}'.`);
     }
   });
+
   const clickRemoveFriend = useCallback(() => {
     if (loading) return;
     if (confirming) return removeFriend();
     setConfirming(true);
-  });
+  }, [loading, confirming, setConfirming, removeFriend]);
+
   return (
     <div className="friend">
       <p className="friend-name">{friend.username}</p>
-      <button onClick={clickRemoveFriend}>
+      <button onClick={clickRemoveFriend} className="friend-remove">
         {confirming ? 'Confirm' : 'Remove'}
       </button>
     </div>

@@ -57,7 +57,7 @@ $arrow-half-width: math.div($arrow-width, 2);
       display: block;
       position: absolute;
       width: $arrow-width;
-      border-radius: 2px;
+      border-radius: $arrow-half-width;
       height: 16px;
       right: 1rem;
     }

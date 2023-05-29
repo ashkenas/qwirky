@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { auth } from "../contexts/firebase";
 import { useAction, useData } from "../util";
 import "../styles/Dashboard.scss";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export default function Dashboard() {
   const [editing, setEditing] = useState(false);
