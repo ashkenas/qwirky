@@ -3,6 +3,7 @@ import { useAction, useData } from "../util";
 import "../styles/Friends.scss";
 import { Link } from "react-router-dom";
 import Friend from "./Friend";
+import FriendRequest from "./FriendRequest";
 
 export default function Friends() {
   const [name, setName] = useState('');
@@ -32,7 +33,7 @@ export default function Friends() {
         onBlur={onNameChange} />
       <button onClick={clickAddFriend}>Add Friend</button>
       <h1>Friend Requests</h1>
-      {data.requests.map(f=><p>{f.username}</p>)}
+      {data.requests.map(f=> <FriendRequest key={f._id} friend={f} refetch={refetch} />)}
       <h1>Friends</h1>
       {data.friends.map(f => <Friend key={f._id} friend={f} refetch={refetch} />)}
     </div>
