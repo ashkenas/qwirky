@@ -33,7 +33,6 @@ app.use('/api/*', async (req, res, next) => {
 });
 mountRoutes(app);
 app.use((err, _req, res, _next) => {
-  console.log(err.status);
   const status = err.status || 500;
   const message = err.message || 'Internal Server Error';
   if (status === 500) console.error(err);
