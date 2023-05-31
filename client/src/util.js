@@ -1,13 +1,28 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import ErrorPage from "./components/ErrorPage";
+import { DataContext, DataDispatchContext } from "./contexts/DataContext";
 import { auth, AuthContext } from "./contexts/firebase";
+
+export function useStoredData(url, initialState) {
+  const store = useContext(DataContext);
+  const dispatch = useContext(DataDispatchContext);
+
+  const setData = useCallback((payload) => {
+    dispatch({
+      url: url,
+      payload: payload
+    });
+  }, [url, dispatch]);
+
+  return [store.get(url) || initialState, setData];
+};
 
 export function useData(url, options = {}) {
   const { onComplete = null, onError = null } = options;
   const user = useContext(AuthContext);
   const [i, setI] = useState(0);
   const refetch = useCallback(() => setI(i + 1), [i, setI]);
-  const [state, setState] = useState({
+  const [state, setState] = useStoredData(url, {
     data: null,
     error: false,
     loading: true

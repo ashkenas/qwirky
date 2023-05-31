@@ -48,7 +48,7 @@ export default function NewGame() {
         <Link to="/dash" className="back" aria-label="back" />
         <h1>New Game</h1>
         <p>You can select up to {remaining} more friend{remaining !== 1 && 's'} to play with you.</p>
-        {loading ? <Loading inline /> : friends.friends.map(f => {
+        {(loading && !friends) ? <Loading inline /> : friends.friends.map(f => {
           const checked = players.includes(f._id);
           return (
             <div key={f._id}>

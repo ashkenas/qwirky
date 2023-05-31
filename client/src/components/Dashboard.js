@@ -7,7 +7,6 @@ import "../styles/Dashboard.scss";
 
 export default function Dashboard() {
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState('');
   const { data, error, loading } = useData('/api/profile', {
     onComplete: (data) => setName(data.username)
   });
@@ -23,6 +22,7 @@ export default function Dashboard() {
         else return alert(message);
       }
     });
+  const [name, setName] = useState(data && data.username);
 
   const editClicked = useCallback(() => {
     if (editLoading) return;

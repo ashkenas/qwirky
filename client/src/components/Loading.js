@@ -1,5 +1,5 @@
 import "../styles/Loading.scss"
 
 export default function Loading({ inline }) {
-  return <div className={`loading${inline ? ' inline' : ''}`}></div>;
+  return <div className={`loading-content${inline ? ' inline' : ''}`}></div>;
 };

@@ -7,6 +7,7 @@ import Dashboard from './Dashboard';
 import Protect from './Protect';
 import Friends from './Friends';
 import NewGame from './NewGame';
+import { DataProvider } from '../contexts/DataContext';
 
 // const initialState = {
 //   board: demoBoard,
@@ -55,7 +56,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <DataProvider>
+        <RouterProvider router={router} />
+      </DataProvider>
     </AuthProvider>
   );
 }
