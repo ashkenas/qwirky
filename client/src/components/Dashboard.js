@@ -37,7 +37,7 @@ export default function Dashboard() {
   }, [setName]);
 
   if (error) return error;
-  if (loading && !editing) return "loading...";
+  if (loading && !data) return "loading...";
 
   return (
     <div className="columns">
@@ -56,13 +56,14 @@ export default function Dashboard() {
       <div className="column">
         <h1>On-going Games</h1>
         <div className="column-body">
-          {data.games.forEach(game => <p>{game.name}</p>)}
-          <div className="game-card">
-            <p className="game-name">47 Ducks</p>
-            <p className="game-players">
-              johnnyboy8, robotlover, arson2, beanman
-            </p>
-          </div>
+          {data.games.map(game => (
+            <Link key={game._id} className="game-card" to={`/game/${game._id}`}>
+              <p className="game-name">{game.name}</p>
+              <p className="game-players">
+                {game.usernames.join(', ')}
+              </p>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

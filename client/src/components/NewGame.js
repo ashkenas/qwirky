@@ -21,14 +21,14 @@ export default function NewGame() {
   }, [createGame, loadingNew, players]);
 
   const toggleFriends = useCallback((e) => {
-    const username = e.target.getAttribute('data-name');
+    const id = e.target.getAttribute('data-id');
     const value = e.target.checked;
     if (value) {
       if (players.length >= 3) return;
       if (players.includes(value)) return;
-      setPlayers([...players, username]);
+      setPlayers([...players, id]);
     } else {
-      const idx = players.indexOf(username);
+      const idx = players.indexOf(id);
       if (idx === -1) return;
       const newPlayers = [...players];
       newPlayers.splice(idx, 1);
@@ -48,11 +48,11 @@ export default function NewGame() {
         <h1>New Game</h1>
         <p>You can select up to {remaining} more friend{remaining !== 1 && 's'} to play with you.</p>
         {friends.friends.map(f => {
-          const checked = players.includes(f.username);
+          const checked = players.includes(f._id);
           return (
             <div key={f._id}>
               <label>
-                <input type="checkbox" data-name={f.username} checked={checked}
+                <input type="checkbox" data-id={f._id} checked={checked}
                   onChange={toggleFriends} disabled={!remaining && !checked} />
                 {f.username}
               </label>

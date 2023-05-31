@@ -8,6 +8,13 @@ $arrow-width: 4px;
   border-radius: 8px;
   padding: .75rem;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
 
   .game-name {
     font-size: 1.25rem;

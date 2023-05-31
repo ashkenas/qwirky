@@ -78,6 +78,7 @@ $back-arrow-half-width: math.div($back-arrow-width, 2);
 .columns {
   display: flex;
   flex-flow: row wrap;
+  height: 100%;
   margin: 0 auto;
   padding: 1rem 0;
   width: calc(960px - 4rem);
@@ -105,10 +106,10 @@ $back-arrow-half-width: math.div($back-arrow-width, 2);
     flex-flow: column nowrap;
     margin: 0 2rem;
     width: calc(100% - 4rem);
-    height: auto;
 
     .column:not(:last-child) {
       margin: 0 0 1rem 0;
+      flex: 0;
     }
   }  
 }
