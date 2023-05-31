@@ -2,9 +2,11 @@ import { resolve } from "path";
 import * as users from "../data/users.js";
 import { sync, validateUsername } from "../util.js";
 import friends from "./friends.js";
+import games from "./games.js";
 
 export const mountRoutes = app => {
   app.use('/api/friends', friends);
+  app.use('/api/games', games);
   app.get('/api/profile', sync (async (req, res) => {
     const user = await users.getUserByUid(req.firebaseId);
     res.json({

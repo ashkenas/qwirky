@@ -14,7 +14,7 @@ export const forceObjectId = id => {
     return new ObjectId(id);
   if (typeof id === 'object' && id instanceof ObjectId && ObjectId.isValid(id))
     return id;
-  throw StatusError(400, 'Invalid ObjectID');
+  throw new StatusError(400, 'Invalid ObjectID');
 };
 
 export const validateUsername = username => {
