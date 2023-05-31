@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAction, useData } from "../util";
 import "../styles/NewGame.scss";
 import { useCallback, useState } from "react";
+import Loading from "./Loading";
 
 export default function NewGame() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export default function NewGame() {
     }
   }, [players]);
 
-  if (loading) return "loading...";
+  // if (loading) return <Loading />;
   if (error) return error;
 
   const remaining = 3 - players.length;
@@ -47,7 +48,7 @@ export default function NewGame() {
         <Link to="/dash" className="back" aria-label="back" />
         <h1>New Game</h1>
         <p>You can select up to {remaining} more friend{remaining !== 1 && 's'} to play with you.</p>
-        {friends.friends.map(f => {
+        {loading ? <Loading inline /> : friends.friends.map(f => {
           const checked = players.includes(f._id);
           return (
             <div key={f._id}>

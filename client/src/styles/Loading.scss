@@ -1,0 +1,23 @@
+@import "_base";
+
+.loading {
+  position: fixed;
+  top: calc(50vh - 2.5rem);
+  width: 100%;
+
+  &.inline {
+    position: static;
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    width: 5rem;
+    height: 5rem;
+    margin: 1rem auto;
+    border-radius: 200000px;
+    border: 3px solid transparent;
+    border-left: 3px solid;
+    animation: spinner .75s linear infinite forwards;
+  }
+}

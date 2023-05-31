@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
+import Loading from "../components/Loading";
 
 export const app = initializeApp({
   apiKey: process.env.REACT_APP_apiKey,
@@ -30,7 +31,7 @@ export function AuthProvider({ children }) {
     );
   }, []);
 
-  if (loading) return <p>Loading auth info...</p>;
+  if (loading) return <Loading />;
 
   return (
     <AuthContext.Provider value={user}>

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { auth } from "../contexts/firebase";
 import { useAction, useData } from "../util";
-import "../styles/Dashboard.scss";
+import Loading from "./Loading";
 import { useCallback, useState } from "react";
+import "../styles/Dashboard.scss";
 
 export default function Dashboard() {
   const [editing, setEditing] = useState(false);
@@ -37,7 +38,7 @@ export default function Dashboard() {
   }, [setName]);
 
   if (error) return error;
-  if (loading && !data) return "loading...";
+  if (loading && !data) return <Loading />;
 
   return (
     <div className="columns">

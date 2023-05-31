@@ -4,6 +4,7 @@ import "../styles/Friends.scss";
 import { Link } from "react-router-dom";
 import Friend from "./Friend";
 import FriendRequest from "./FriendRequest";
+import Loading from "./Loading";
 
 export default function Friends() {
   const [name, setName] = useState('');
@@ -27,7 +28,8 @@ export default function Friends() {
   }, [addLoading, addFriend, name]);
 
   if (error) return error;
-  if (loading && !data) return "loading";
+  if (loading && !data) return <Loading />;
+
   return (<>
     <Link to="/dash" className="back" aria-label="back" />
     <div className="columns">
