@@ -1,17 +1,18 @@
 import { resolve } from "path";
 import * as users from "../data/users.js";
+import * as games from "../data/games.js";
 import { sync, validateUsername } from "../util.js";
-import friends from "./friends.js";
-import games from "./games.js";
+import friendsRoutes from "./friends.js";
+import gamesRoutes from "./games.js";
 
 export const mountRoutes = app => {
-  app.use('/api/friends', friends);
-  app.use('/api/games', games);
+  app.use('/api/friends', friendsRoutes);
+  app.use('/api/games', gamesRoutes);
   app.get('/api/profile', sync (async (req, res) => {
     const user = await users.getUserByUid(req.firebaseId);
     res.json({
       username: user.username,
-      games: user.games
+      games: await games.getGames(req.firebaseId)
     });
   }));
   app.post('/api/profile/username', sync (async (req, res) => {

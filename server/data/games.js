@@ -4,9 +4,10 @@ import { generateName } from "./names.js";
 import { getUserByUid } from "./users.js";
 
 const fullPieceSet = [];
-for (let i = 1; i <= 6; i++)
-  for (let j = 0x10; j <= 0x60; j += 0x10)
-    fullPieceSet.push(i | j);
+for (let k = 0; k < 3; k++)
+  for (let i = 1; i <= 6; i++)
+    for (let j = 0x10; j <= 0x60; j += 0x10)
+      fullPieceSet.push(i | j);
 
 // Durstenfeld's Fisher-Yates Shuffle
 const shuffle = array => {
@@ -74,15 +75,7 @@ export const createGame = async players => {
 
   const res2 = await usersCol.updateMany(
     { _id: { $in: players } },
-    {
-      $push: {
-        games: {
-          _id: res.insertedId,
-          name: name,
-          usernames: usernames
-        }
-      }
-    }
+    { $push: { games: res.insertedId } }
   );
 
   if (!res2.acknowledged || !res2.modifiedCount)
@@ -94,9 +87,48 @@ export const createGame = async players => {
 export const getGames = async uid => {
   const user = await getUserByUid(uid);
   const col = await games();
-  const games = await col.aggregate([
+  const gamesResults = await col.aggregate([
     { $match: { _id: { $in: user.games } } },
     { $project: { name: 1, usernames: 1, currentPlayer: 1 } }
   ]).toArray();
-  return games;
+  return gamesResults;
 };
+
+export const getGame = async id => {
+  id = forceObjectId(id);
+  const col = await games();
+  const game = await col.findOne({ _id: id });
+  return game;
+};
+
+export const makeMove = async (id, placed) => {
+  id = forceObjectId;
+  const game = await getGame(id);
+
+  const hand = [...game.hands[game.currentPlayer]];
+  for (const [val, x, y] of placed) {
+    hand.splice(hand.indexOf(val), 1);
+    if (!game.board[x])
+      game.board[x] = {};
+    game.board[x][y] = val;
+  }
+  const draw = game.pieces.splice(0, placed.length);
+  game.hands[game.currentPlayer] = hand.concat(draw);
+
+  const col = await games();
+  const res = await col.updateOne(
+    { _id: id },
+    {
+      $set: {
+        board: game.board,
+        currentPlayer: (game.currentPlayer + 1) % game.players.length,
+        pieces: game.pieces,
+        hands: game.hands
+      }
+    }
+  );
+  if (!res.acknowledged || !res.modifiedCount)
+    throw new Error('Failed to submit move.');
+
+  return await getGame(id);
+}

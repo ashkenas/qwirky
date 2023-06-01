@@ -6,7 +6,7 @@ import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { WebSocketServer } from "ws";
 import * as users from "./data/users.js";
-import { gameMessage } from "./routes/websockets.js";
+import * as websockets from "./routes/websockets.js";
 
 const firebaseApp = initializeApp({
   credential: applicationDefault()
@@ -87,7 +87,7 @@ server.on('upgrade', async (req, socket, head) => {
   const gameId = match[1];
   try {
     const user = await users.getUserByUid(uid);
-    if (!user.games.find(g => g._id.equals(gameId))) {
+    if (!user.games.find(g => g.equals(gameId))) {
       socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
       socket.destroy();
       return;
@@ -118,11 +118,14 @@ wss.on('connection', (ws, req) => {
 
   ws.on('pong', () => ws.isAlive = true);
 
-  ws.on('message', gameMessage(req.game, ws.id, gameClients.get(req.game)));
+  ws.on('message',
+    websockets.gameMessage(req.game, ws.id, gameClients.get(req.game)));
 
   ws.on('close', () => {
     delete gameClients.get(req.game)[ws.id];
   });
+
+  websockets.gameInitialize(ws, req.game, ws.id);
 });
 
 const cleanupInterval = setInterval(() => {
