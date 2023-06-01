@@ -52,7 +52,7 @@ const wss = new WebSocketServer({ noServer: true });
 
 // WebSocket hell
 server.on('upgrade', async (req, socket, head) => {
-  const token = req.headers.authorization;
+  const token = req.headers['sec-websocket-protocol'];
   let uid;
 
   if (token) {
@@ -77,7 +77,7 @@ server.on('upgrade', async (req, socket, head) => {
   }
 
   // At this point we are authenticated. Authorize.
-  const match = (/^\/games\/([0-9a-f]{24})\/?$/i).exec(req.url);
+  const match = (/^\/game\/([0-9a-f]{24})\/?$/i).exec(req.url);
   if (!match) {
     socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
     socket.destroy();
@@ -95,7 +95,7 @@ server.on('upgrade', async (req, socket, head) => {
 
     // We are authorized by process of elimination, proceed
     wss.handleUpgrade(req, socket, head, ws => {
-      ws.id = _id;
+      ws.id = user._id;
       req.game = gameId;
       wss.emit('connection', ws, req);
     });
@@ -108,24 +108,20 @@ server.on('upgrade', async (req, socket, head) => {
 });
 
 wss.on('connection', (ws, req) => {
-  if (!clients.get(req.game)) {
-    clients.set(req.game, {
+  if (!gameClients.get(req.game)) {
+    gameClients.set(req.game, {
       [ws.id]: ws
     });
   } else {
-    clients.get(req.game)[ws.id] = ws;
+    gameClients.get(req.game)[ws.id] = ws;
   }
 
   ws.on('pong', () => ws.isAlive = true);
 
-  ws.on('message', gameMessage(req.game, ws.id, gameClients.get(req.game))
-    .catch(e => {
-      console.error(e);
-      ws.send(JSON.stringify({ error: 'Internal Server Error' }));
-    }));
+  ws.on('message', gameMessage(req.game, ws.id, gameClients.get(req.game)));
 
   ws.on('close', () => {
-    delete clients.get(req.game)[ws.id];
+    delete gameClients.get(req.game)[ws.id];
   });
 });
 

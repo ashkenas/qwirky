@@ -17,6 +17,31 @@ export function useStoredData(url, initialState) {
   return [store.get(url) || initialState, setData];
 };
 
+export function useWebSocket(dispatch) {
+  const user = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+  const [ws, setWS] = useState(null);
+
+  useEffect(() => {
+    const { host, pathname } = window.location;
+    let ws;
+    auth.currentUser?.getIdToken().then(async token => {
+      ws = new WebSocket(`ws://${host}${pathname}`, token);
+      ws.addEventListener('open', () => setLoading(false));
+      ws.addEventListener('message', ({ data }) => {
+        dispatch(JSON.parse(data));
+      });
+      setWS(ws);
+    });
+    return () => {
+      ws.close();
+      setWS(null);
+    };
+  }, [user, dispatch, setLoading, setWS]);
+
+  return [ws, loading];
+}
+
 export function useData(url, options = {}) {
   const { onComplete = null, onError = null } = options;
   const user = useContext(AuthContext);

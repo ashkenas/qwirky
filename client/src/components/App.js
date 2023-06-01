@@ -1,5 +1,5 @@
 import Home from './Home';
-// import { demoBoard, demoMap } from '../demoBoard';
+import { demoBoard, demoMap } from '../demoBoard';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from '../contexts/firebase';
 import ErrorPage from './ErrorPage';
@@ -8,15 +8,17 @@ import Protect from './Protect';
 import Friends from './Friends';
 import NewGame from './NewGame';
 import { DataProvider } from '../contexts/DataContext';
+import GamePage from './GamePage';
+import { GameProvider } from '../contexts/GameContext';
 
-// const initialState = {
-//   board: demoBoard,
-//   map: demoMap,
-//   turn: true,
-//   pieces: [0x11, 0x12, 0x13, 0x14, 0x15, 0x16],
-//   placed: [],
-//   selected: 0
-// };
+const initialState = {
+  board: demoBoard,
+  map: demoMap,
+  turn: true,
+  pieces: [0x11, 0x12, 0x13, 0x14, 0x15, 0x16],
+  placed: [],
+  selected: 0
+};
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,16 @@ const router = createBrowserRouter([
       </Protect>
     ),
     path: '/friends'
+  },
+  {
+    element: (
+      <Protect>
+        <GameProvider initialState={initialState}>
+          <GamePage />
+        </GameProvider>
+      </Protect>
+    ),
+    path: '/game/:id'
   },
   {
     element: (
