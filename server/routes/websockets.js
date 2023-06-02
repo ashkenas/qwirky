@@ -1,12 +1,12 @@
 import { getGame, makeMove } from "../data/games.js";
 
 const handler = f => function(data) {
-  f(JSON.parse(data)).catch((e) => this.send(
+  f(JSON.parse(data)).catch((e) => (console.error(e),this.send(
     JSON.stringify({
       type: 'error',
       error: e.message || 'Internal Server Error'
     })
-  ));
+  )));
 };
 
 export const gameMessage = (gameId, senderId, players) => handler(async data => {
@@ -18,8 +18,9 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
   if (data.type === 'move') {
     const [, fx, fy] = data.placed[0];
     let sameX = true, sameY = true;
+    if (!game.board) game.board = {};
     for (const [val, x, y] of data.placed) {
-      const pIdx = hand.indexOf(p);
+      const pIdx = hand.indexOf(val);
       if (pIdx === -1)
         throw new Error('Invalid move. You played a piece you do not have.');
       hand.splice(pIdx, 1);
@@ -55,6 +56,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
     const newState = await makeMove(gameId, data.placed);
     for (const player in players) {
       const payload = {
+        type: 'move',
         placed: data.placed,
         yourTurn: newState.players[newState.currentPlayer].equals(player)
       };

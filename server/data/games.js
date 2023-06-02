@@ -61,7 +61,7 @@ export const createGame = async players => {
   usernames = usernames.map(user => user.username);
 
   const res = await col.insertOne({
-    board: {},
+    board: null,
     name: name,
     pieces: pieces,
     players: players,
@@ -102,8 +102,9 @@ export const getGame = async id => {
 };
 
 export const makeMove = async (id, placed) => {
-  id = forceObjectId;
+  id = forceObjectId(id);
   const game = await getGame(id);
+  if (!game.board) game.board = {};
 
   const hand = [...game.hands[game.currentPlayer]];
   for (const [val, x, y] of placed) {
