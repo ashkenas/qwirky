@@ -8,7 +8,7 @@
     "url": "git+https://github.com/ashkenas/qwirky.git"
   },
   "scripts": {
-    "build": "npm run build --prefix client && mv ./client/build ./server/public",
+    "build": "npm run build --prefix client && rm -rf ./server/public && mv ./client/build ./server/public",
     "serve": "npm start --prefix server",
     "start": "npm run build && npm run serve"
   },

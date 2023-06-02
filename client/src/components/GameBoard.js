@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { GameContext } from "../contexts/GameContext";
 import Gamepiece from "./Gamepiece";
 import Placement from "./Placement";
@@ -7,33 +7,42 @@ import "../styles/Gameboard.scss";
 const distSq = (t1, t2) =>
   ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);
 
-const buildBoard = (board, pieces, seen, x, y) => {
-  if (seen.get(x)?.get(y)) return;
-  const col = seen.get(x) || new Map();
-  col.set(y, true);
-  seen.set(x, col);
-  if (!board) return pieces.push(<Placement key={`${x},${y}`} x={x} y={y} />);
-  pieces.push(<Gamepiece key={`${x},${y}`} value={board.val} x={x} y={y}
-    canRemove={board.canRemove} />);
-  buildBoard(board.right, pieces, seen, x + 1, y);
-  buildBoard(board.left, pieces, seen, x - 1, y);
-  buildBoard(board.up, pieces, seen, x, y + 1);
-  buildBoard(board.down, pieces, seen, x, y - 1);
-};
-
 export default function GameBoard() {
-  const { board } = useContext(GameContext);
+  const { board, placed } = useContext(GameContext);
   const centerRef = useRef(null);
   const boardRef = useRef(null);
   const coords = useRef([0, 0, 1]);
   const [moving, setMoving] = useState(false);
 
-  const pieces = [];
-  const seen = new Map();
+  const pieces = useMemo(() => {
+    if (board) {
+      const pieces = [];
+      const placements = {};
+      for (const x in board) {
+        if (!placements[(+x) - 1]) placements[(+x) - 1] = {};
+        if (!placements[x]) placements[x] = {};
+        if (!placements[(+x) + 1]) placements[(+x) + 1] = {};
+        for (const y in board[x]) {
+          const highlight = placed.some(([, px, py]) => x == px && y == py);
+          pieces.push(<Gamepiece key={`${x},${y}`} x={+x} y={+y}
+            value={board[x][y]} highlight={highlight} />);
 
-  if (board) {
-    buildBoard(board, pieces, seen, 0, 0);
-  }
+          if (!board[(+x) + 1]?.[y]) placements[(+x) + 1][y] = true;
+          if (!board[(+x) - 1]?.[y]) placements[(+x) - 1][y] = true;
+          if (!board[x]?.[(+y) + 1]) placements[x][(+y) + 1] = true;
+          if (!board[x]?.[(+y) - 1]) placements[x][(+y) - 1] = true;
+        }
+      }
+
+      for (const x in placements)
+        for (const y in placements[x])
+          pieces.push(<Placement key={`${x},${y}`} x={+x} y={+y} />);
+      
+      return pieces;
+    } else {
+      return [<Placement key="0,0" x={0} y={0} />];
+    }
+  }, [board, placed]);
 
   const move = useCallback((e) => {
     if (e.nativeEvent instanceof MouseEvent && e.buttons !== 1) return;
@@ -89,7 +98,7 @@ export default function GameBoard() {
     <div className="game-board" ref={boardRef} onMouseMove={move}
       onClickCapture={doneMoving}>
       <div className="center-piece" ref={centerRef}>
-        {pieces};
+        {pieces}
       </div>
     </div>
   )

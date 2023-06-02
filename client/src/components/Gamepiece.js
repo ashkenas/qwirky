@@ -2,11 +2,11 @@ import { useCallback, useContext } from "react";
 import { GameDispatchContext, select } from "../contexts/GameContext";
 import "../styles/Gamepiece.scss";
 
-export default function Gamepiece({ value, x, y, canRemove, selected, racked }) {
+export default function Gamepiece({ value, x, y, highlight, selected, racked }) {
   const dispatch = useContext(GameDispatchContext);
 
   const classes = ['piece', `p${value & 0xF}${(value >> 4) & 0xF}`];
-  if (canRemove) classes.push('removeable');
+  if (highlight) classes.push('highlight');
   if (selected) classes.push('selected');
 
   const onClick = useCallback(() => {

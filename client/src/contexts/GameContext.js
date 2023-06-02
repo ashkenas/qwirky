@@ -2,11 +2,11 @@ import { createContext, useReducer } from "react";
 
 export const GameContext = createContext({
   board: null,
-  map: new Map(),
-  turn: true,
+  yourTurn: false,
   selected: 0,
-  pieces: [],
-  placed: []
+  hand: [],
+  placed: [],
+  justMoved: false
 });
 
 export const GameDispatchContext = createContext(null);
@@ -24,89 +24,102 @@ export function GameProvider({ children, initialState }) {
 };
 
 export const gameReducer = (state, action) => {
-  if (action.type === 'placePiece') {
-    const val = state.pieces[state.selected];
+  if (action.type === 'initialize') {
+    return {
+      board: action.board,
+      yourTurn: action.yourTurn,
+      hand: action.hand,
+      selected: 0,
+      placed: []
+    };
+  } else if (action.type === 'move') {
+    const newState = {
+      ...state,
+      yourTurn: action.yourTurn,
+      placed: action.placed,
+      hand: action.hand || state.hand,
+      justMoved: false
+    };
+
+    for (const [val, x, y] of state.placed) {
+      if (!newState.board[x]) newState.board[x] = {};
+      newState.board[x][y] = val;
+    }
+
+    return newState;
+  } else if (action.type === 'placePiece') {
+    const val = state.hand[state.selected];
     const { x, y } = action;
-    if (!state.turn || !val || state.map.get(x)?.get(y))
+    if (!state.yourTurn || !val || (state.board && state.board[x]?.[y]))
       return { ...state };
 
     const newState = {
       ...state,
-      selected: Math.min(state.pieces.length - 2, state.selected),
-      pieces: [...state.pieces],
-      placed: [...state.placed]
+      board: state.board || {},
+      selected: Math.min(state.hand.length - 2, state.selected),
+      hand: [...state.hand],
+      placed: [...state.placed, [val, x, y]]
     };
-    newState.pieces.splice(state.selected, 1);
-
-    const left = newState.map.get(x - 1)?.get(y);
-    const right = newState.map.get(x + 1)?.get(y);
-    const up = newState.map.get(x)?.get(y + 1);
-    const down = newState.map.get(x)?.get(y - 1);
-
-    const piece = {
-      val: val,
-      canRemove: true,
-      left: left,
-      right: right,
-      up: up,
-      down: down,
-      x: x,
-      y: y
-    };
-
-    newState.placed.push(piece);
+    newState.hand.splice(state.selected, 1);
 
     // Validate piece placement
     let sameX = true, sameY = true;
-    for (const p of state.placed) {
-      sameX &&= p.x === x;
-      sameY &&= p.y === y;
+    for (const [, px, py] of state.placed) {
+      sameX &&= x === px;
+      sameY &&= y === py;
     }
     if (!sameX && !sameY) return { ...state };
 
-    for (const dirs of [['up', 'down'], ['left', 'right']]) {
+    for (const dirs of [[[1, 0], [-1, 0]], [[0, 1], [0, -1]]]) {
       let sameA = true, sameB = true;
-      for (const dir of dirs) {
-        let current = piece;
-        while (current[dir]) {
-          if (current[dir].val === val) return { ...state };
-          current = current[dir];
-          sameA &&= (current.val & 0xF) === (val & 0xF);
-          sameB &&= (current.val & 0xF0) === (val & 0xF0);
+      for (const [dirX, dirY] of dirs) {
+        let curX = x + dirX, curY = y + dirY;
+        let current = newState.board[curX]?.[curY];
+        while (current) {
+          if (current === val) return { ...state };
+          sameA &&= (current & 0xF) === (val & 0xF);
+          sameB &&= (current & 0xF0) === (val & 0xF0);
+          curX += dirX;
+          curY += dirY;
+          current = newState.board[curX]?.[curY];
         }
       }
       if (!sameA && !sameB) return { ...state };
     }
 
-    if (left) left.right = piece;
-    if (right) right.left = piece;
-    if (up) up.down = piece;
-    if (down) down.up = piece;
-
-    const col = newState.map.get(x) || new Map();
-    col.set(y, piece);
-    newState.map.set(x, col);
+    if (!newState.board[x]) newState.board[x] = { [y]: val };
+    else newState.board[x][y] = val;
 
     return newState;
   } else if (action.type === 'pickup') {
     const newState = {
       ...state,
-      pieces: [...state.pieces, ...state.placed.map(p => p.val)],
+      board: state.board || {},
+      hand: [...state.hand, ...state.placed.map(p => p[0])],
       placed: []
     };
 
-    for (const piece of state.placed) {
-      if (piece.left) piece.left.right = null;
-      if (piece.right) piece.right.left = null;
-      if (piece.up) piece.up.down = null;
-      if (piece.down) piece.down.up = null;
-  
-      newState.map.get(piece.x)?.delete(piece.y);
+    let replaceRoot = false;
+    for (const [, x, y] of state.placed) {
+      if (x === 0 && y === 0) replaceRoot = true;
+      if (newState.board[x]) delete newState.board[x][y];
     }
+    if (replaceRoot) newState.board = null;
 
     return newState;
   } else if (action.type === 'select') {
     return { ...state, selected: action.x };
+  } else if (action.type === 'endTurn') {
+    return {
+      ...state,
+      yourTurn: false,
+      justMoved: true
+    };
+  } else if (action.type === 'error') {
+    alert(action.error);
+    if (state.justMoved)
+      return gameReducer({ ...state, yourTurn: true }, pickup());
+    else return { ...state };
   }
   console.error(`Invalid action '${action && action.type}'.`);
   return { ...state };
@@ -125,4 +138,8 @@ export const pickup = () => ({
 export const select = (x) => ({
   type: 'select',
   x: x
+});
+
+export const endTurn = () => ({
+  type: 'endTurn'
 });
