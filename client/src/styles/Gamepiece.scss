@@ -56,12 +56,15 @@ div.piece {
   width: 5rem;
 }
 
-div.piece.highlight {
+div.piece.placing {
   background-color: #444444;
 };
 
+div.piece.highlight {
+  background: repeating-linear-gradient(#444444, #444444 10px, #000000 10px, #000000 20px);
+};
+
 div.piece.selected {
-  // border: 3px solid red;
   transform: translateY(-.5rem);
 }
 

@@ -6,6 +6,7 @@ export const GameContext = createContext({
   selected: 0,
   hand: [],
   placed: [],
+  lastMove: [],
   justMoved: false
 });
 
@@ -30,18 +31,21 @@ export const gameReducer = (state, action) => {
       yourTurn: action.yourTurn,
       hand: action.hand,
       selected: 0,
-      placed: []
+      placed: [],
+      lastMove: [],
+      justMoved: false
     };
   } else if (action.type === 'move') {
     const newState = {
       ...state,
       yourTurn: action.yourTurn,
-      placed: action.placed,
+      lastMove: action.placed,
+      placed: [],
       hand: action.hand || state.hand,
       justMoved: false
     };
 
-    for (const [val, x, y] of state.placed) {
+    for (const [val, x, y] of action.placed) {
       if (!newState.board[x]) newState.board[x] = {};
       newState.board[x][y] = val;
     }

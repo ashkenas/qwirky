@@ -8,7 +8,7 @@ const distSq = (t1, t2) =>
   ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);
 
 export default function GameBoard() {
-  const { board, placed } = useContext(GameContext);
+  const { board, placed, lastMove } = useContext(GameContext);
   const centerRef = useRef(null);
   const boardRef = useRef(null);
   const coords = useRef([0, 0, 1]);
@@ -23,9 +23,10 @@ export default function GameBoard() {
         if (!placements[x]) placements[x] = {};
         if (!placements[(+x) + 1]) placements[(+x) + 1] = {};
         for (const y in board[x]) {
-          const highlight = placed.some(([, px, py]) => x == px && y == py);
+          const placing = placed.some(([, px, py]) => x == px && y == py);
+          const highlight = lastMove.some(([, px, py]) => x == px && y == py);
           pieces.push(<Gamepiece key={`${x},${y}`} x={+x} y={+y}
-            value={board[x][y]} highlight={highlight} />);
+            value={board[x][y]} highlight={highlight} placing={placing} />);
 
           if (!board[(+x) + 1]?.[y]) placements[(+x) + 1][y] = true;
           if (!board[(+x) - 1]?.[y]) placements[(+x) - 1][y] = true;
