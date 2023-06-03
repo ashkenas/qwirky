@@ -7,7 +7,9 @@ export const GameContext = createContext({
   hand: [],
   placed: [],
   lastMove: [],
-  justMoved: false
+  justMoved: false,
+  trading: false,
+  toTrade: []
 });
 
 export const GameDispatchContext = createContext(null);
@@ -33,7 +35,9 @@ export const gameReducer = (state, action) => {
       selected: 0,
       placed: [],
       lastMove: [],
-      justMoved: false
+      justMoved: false,
+      trading: false,
+      toTrade: []
     };
   } else if (action.type === 'move') {
     const newState = {
@@ -43,7 +47,9 @@ export const gameReducer = (state, action) => {
       lastMove: action.placed,
       placed: [],
       hand: action.hand || state.hand,
-      justMoved: false
+      justMoved: false,
+      trading: false,
+      toTrade: []
     };
 
     for (const [val, x, y] of action.placed) {
@@ -53,6 +59,7 @@ export const gameReducer = (state, action) => {
 
     return newState;
   } else if (action.type === 'placePiece') {
+    if (state.trading) return { ...state };
     const val = state.hand[state.selected];
     const { x, y } = action;
     if (!state.yourTurn || !val || (state.board && state.board[x]?.[y]))
@@ -96,6 +103,11 @@ export const gameReducer = (state, action) => {
     else newState.board[x][y] = val;
 
     return newState;
+  } else if (action.type === 'startTrade') {
+    if (!state.yourTurn) return { ...state };
+    return { ...state, trading: true };
+  } else if (action.type === 'cancelTrade') {
+    return { ...state, trading: false, toTrade: [] };
   } else if (action.type === 'pickup') {
     const newState = {
       ...state,
@@ -113,6 +125,21 @@ export const gameReducer = (state, action) => {
 
     return newState;
   } else if (action.type === 'select') {
+    if (state.trading) {
+      if (state.toTrade.includes(action.x)) {
+        return {
+          ...state,
+          selected: action.x,
+          toTrade: state.toTrade.filter(i => i !== action.x)
+        };
+      } else {
+        return {
+          ...state,
+          selected: action.x,
+          toTrade: [...state.toTrade, action.x]
+        };
+      }
+    }
     return { ...state, selected: action.x };
   } else if (action.type === 'endTurn') {
     return {
@@ -147,4 +174,12 @@ export const select = (x) => ({
 
 export const endTurn = () => ({
   type: 'endTurn'
+});
+
+export const startTrade = () => ({
+  type: 'startTrade'
+});
+
+export const cancelTrade = () => ({
+  type: 'cancelTrade'
 });
