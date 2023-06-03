@@ -133,3 +133,32 @@ export const makeMove = async (id, placed) => {
 
   return await getGame(id);
 }
+
+export const makeTrade = async (id, pieces) => {
+  id = forceObjectId(id);
+  const game = await getGame(id);
+
+  const hand = [...game.hands[game.currentPlayer]];
+  for (const val of pieces) {
+    hand.splice(hand.indexOf(val), 1);
+  }
+  const draw = game.pieces.splice(0, pieces.length);
+  game.hands[game.currentPlayer] = hand.concat(draw);
+
+  const col = await games();
+  const res = await col.updateOne(
+    { _id: id },
+    {
+      $set: {
+        board: game.board,
+        currentPlayer: (game.currentPlayer + 1) % game.players.length,
+        pieces: game.pieces,
+        hands: game.hands
+      }
+    }
+  );
+  if (!res.acknowledged || !res.modifiedCount)
+    throw new Error('Failed to submit move.');
+
+  return await getGame(id);
+}
