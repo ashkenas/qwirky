@@ -1,6 +1,5 @@
 import { useCallback, useContext } from "react";
 import { endTurn, GameContext, GameDispatchContext } from "../contexts/GameContext";
-import "../styles/SubmitButton.scss";
 
 export default function SubmitButton({ ws }) {
   const { placed } = useContext(GameContext);

@@ -18,20 +18,22 @@ export default function GameBoard() {
     if (board) {
       const pieces = [];
       const placements = {};
-      for (const x in board) {
-        if (!placements[(+x) - 1]) placements[(+x) - 1] = {};
+      for (let x in board) {
+        x = +x;
+        if (!placements[x - 1]) placements[x - 1] = {};
         if (!placements[x]) placements[x] = {};
-        if (!placements[(+x) + 1]) placements[(+x) + 1] = {};
-        for (const y in board[x]) {
-          const placing = placed.some(([, px, py]) => x == px && y == py);
-          const highlight = lastMove.some(([, px, py]) => x == px && y == py);
-          pieces.push(<Gamepiece key={`${x},${y}`} x={+x} y={+y}
+        if (!placements[x + 1]) placements[x + 1] = {};
+        for (let y in board[x]) {
+          y = +y;
+          const placing = placed.some(([, px, py]) => x === px && y === py);
+          const highlight = lastMove.some(([, px, py]) => x === px && y === py);
+          pieces.push(<Gamepiece key={`${x},${y}`} x={x} y={y}
             value={board[x][y]} highlight={highlight} placing={placing} />);
 
-          if (!board[(+x) + 1]?.[y]) placements[(+x) + 1][y] = true;
-          if (!board[(+x) - 1]?.[y]) placements[(+x) - 1][y] = true;
-          if (!board[x]?.[(+y) + 1]) placements[x][(+y) + 1] = true;
-          if (!board[x]?.[(+y) - 1]) placements[x][(+y) - 1] = true;
+          if (!board[x + 1]?.[y]) placements[x + 1][y] = true;
+          if (!board[x - 1]?.[y]) placements[x - 1][y] = true;
+          if (!board[x]?.[y + 1]) placements[x][y + 1] = true;
+          if (!board[x]?.[y - 1]) placements[x][y - 1] = true;
         }
       }
 
@@ -43,7 +45,7 @@ export default function GameBoard() {
     } else {
       return [<Placement key="0,0" x={0} y={0} />];
     }
-  }, [board, placed]);
+  }, [board, placed, lastMove]);
 
   const move = useCallback((e) => {
     if (e.nativeEvent instanceof MouseEvent && e.buttons !== 1) return;

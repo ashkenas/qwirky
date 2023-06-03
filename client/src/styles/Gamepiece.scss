@@ -52,8 +52,8 @@ div.piece {
   position: absolute;
   display: inline-block;
   background-color: black;
-  height: 5rem;
-  width: 5rem;
+  height: 5em;
+  width: 5em;
 }
 
 div.piece.placing {
@@ -65,7 +65,7 @@ div.piece.highlight {
 };
 
 div.piece.selected {
-  transform: translateY(-.5rem);
+  transform: translateY(-.5em);
 }
 
 div.piece::after, div.piece::before {

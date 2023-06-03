@@ -1,10 +1,9 @@
 import GameBoard from "./GameBoard";
-import PieceRack from "./PieceRack";
+import Controls from "./Controls";
 import { Link } from "react-router-dom";
 import { useWebSocket } from "../util";
 import { useContext } from "react";
 import { GameDispatchContext } from "../contexts/GameContext";
-import SubmitButton from "./SubmitButton";
 import Loading from "./Loading";
 
 export default function GamePage() {
@@ -15,8 +14,7 @@ export default function GamePage() {
 
   return (<>
     <GameBoard />
-    <PieceRack />
-    <SubmitButton ws={ws} />
+    <Controls ws={ws} />
     <Link to="/dash" className="back" />
   </>);
 };

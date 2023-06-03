@@ -38,6 +38,7 @@ export const gameReducer = (state, action) => {
   } else if (action.type === 'move') {
     const newState = {
       ...state,
+      board: state.board || {},
       yourTurn: action.yourTurn,
       lastMove: action.placed,
       placed: [],

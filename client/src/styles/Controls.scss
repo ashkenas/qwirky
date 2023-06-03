@@ -1,0 +1,107 @@
+@import "_base";
+
+.controls {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  position: fixed;
+  bottom: 1rem;
+  width: 100%;
+
+  .rack {
+    width: 31em;
+    margin-bottom: 1rem;
+
+    .piece {
+      position: relative;
+      display: inline-block;
+      transition: .25s transform;
+
+      &:not(:last-child) {
+        margin-right: .2em;
+      }
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 31rem;
+
+    button {
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: none;
+    }
+
+    .trade {
+      @include button($color2);
+      background-color: $color2;
+      width: 100%;
+    }
+
+    .undo {
+      @include button($color1);
+      background-color: $color1;
+      color: white;
+      margin-right: 1rem;
+      width: calc(50% - .5rem);
+    }
+
+    .submit-move {
+      @include button($color4);
+      background-color: $color4;
+      border: none;
+      width: calc(50% - .5rem);
+    }
+  }
+}
+
+@media (max-width: 960px), screen and (orientation: portrait) {
+  .controls {
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: flex-start;
+    bottom: 0rem;
+
+    .rack {
+      width: 15.4rem;
+      margin: 0 .75em .25em 0;
+
+      .piece {
+        margin-bottom: .75em;
+
+        &:nth-child(3) {
+          margin-right: 0;
+        }
+      }
+    }
+
+    .buttons {
+      flex-flow: column nowrap;
+      width: auto;
+      padding-top: .5rem;
+
+      button {
+        padding: 0;
+      }
+
+      .trade {
+        height: 10em;
+        width: 5em;
+      }
+
+      .undo {
+        height: 4em;
+        width: 5em;
+        margin: 0 0 2rem 0;
+      }
+
+      .submit-move {
+        width: 5em;
+        height: 4em;
+      }
+    }
+  }  
+}
