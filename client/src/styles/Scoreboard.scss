@@ -1,0 +1,14 @@
+@import "_base";
+
+.scoreboard {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: .25rem .75rem;
+  background-color: $color5;
+  border-radius: 8px;
+
+  p {
+    margin: 0;
+  }
+}

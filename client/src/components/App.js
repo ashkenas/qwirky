@@ -10,15 +10,6 @@ import { DataProvider } from '../contexts/DataContext';
 import GamePage from './GamePage';
 import { GameProvider } from '../contexts/GameContext';
 
-const initialState = {
-  board: null,
-  yourTurn: false,
-  hand: [],
-  placed: [],
-  selected: 0,
-  justMoved: false
-};
-
 const router = createBrowserRouter([
   {
     element: <Home />,
@@ -43,7 +34,7 @@ const router = createBrowserRouter([
   {
     element: (
       <Protect>
-        <GameProvider initialState={initialState}>
+        <GameProvider>
           <GamePage />
         </GameProvider>
       </Protect>

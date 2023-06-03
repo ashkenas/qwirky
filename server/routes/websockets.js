@@ -84,6 +84,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       const payload = {
         type: 'move',
         placed: data.placed,
+        currentPlayer: newState.currentPlayer,
         yourTurn: newState.players[newState.currentPlayer].equals(player)
       };
 
@@ -117,6 +118,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       const payload = {
         type: 'move',
         placed: [],
+        currentPlayer: newState.currentPlayer,
         yourTurn: newState.players[newState.currentPlayer].equals(player)
       };
 

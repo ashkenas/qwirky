@@ -5,6 +5,7 @@ import { useWebSocket } from "../util";
 import { useContext } from "react";
 import { GameDispatchContext } from "../contexts/GameContext";
 import Loading from "./Loading";
+import Scoreboard from "./Scoreboard";
 
 export default function GamePage() {
   const dispatch = useContext(GameDispatchContext)
@@ -15,6 +16,7 @@ export default function GamePage() {
   return (<>
     <GameBoard />
     <Controls ws={ws} />
+    <Scoreboard />
     <Link to="/dash" className="back" />
   </>);
 };
