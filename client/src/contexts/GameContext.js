@@ -11,7 +11,8 @@ export const GameContext = createContext({
   trading: false,
   toTrade: [],
   players: [],
-  currentPlayer: -1
+  currentPlayer: -1,
+  scores: []
 });
 
 export const GameDispatchContext = createContext(null);
@@ -27,7 +28,8 @@ const initialState = {
   trading: false,
   toTrade: [],
   players: [],
-  currentPlayer: -1
+  currentPlayer: -1,
+  scores: []
 };
 
 export function GameProvider({ children }) {
@@ -55,21 +57,29 @@ export const gameReducer = (state, action) => {
       trading: false,
       toTrade: [],
       players: action.players,
-      currentPlayer: action.currentPlayer
+      currentPlayer: action.currentPlayer,
+      scores: action.scores
     };
   } else if (action.type === 'move') {
     const newState = {
       ...state,
-      board: state.board || {},
       yourTurn: action.yourTurn,
       lastMove: action.placed,
       placed: [],
-      hand: action.hand || state.hand,
       justMoved: false,
       trading: false,
       toTrade: [],
       currentPlayer: action.currentPlayer
     };
+
+    if (!newState.board)
+      newState.board = {};
+
+    if (action.hand)
+      newState.hand = action.hand;
+
+    if (action.score)
+      newState.scores[state.currentPlayer] += action.score;
 
     for (const [val, x, y] of action.placed) {
       if (!newState.board[x]) newState.board[x] = {};

@@ -3,26 +3,32 @@ import { GameContext } from "../contexts/GameContext";
 import "../styles/Scoreboard.scss";
 
 export default function Scoreboard() {
-  const { currentPlayer, yourTurn, justMoved, players } = useContext(GameContext);
+  const { currentPlayer, players, scores } = useContext(GameContext);
   const [open, setOpen] = useState(false);
 
-  const text = useMemo(() =>
-    yourTurn ? 'Your Turn' : justMoved ? 'Processing...' : players[currentPlayer]
-  , [yourTurn, justMoved, players, currentPlayer]);
-
   const list = useMemo(() => {
-    const list = players.slice(currentPlayer + 1).concat(players.slice(0, currentPlayer));
-    return list.map(p => <p key={p}>{p}</p>);
-  }, [players, currentPlayer]);
+    const withScores = players.map((p, i) => [p, scores[i]]);
+    const list = withScores.slice(currentPlayer)
+      .concat(withScores.slice(0, currentPlayer));
+    return list.map(([player, score]) => (
+      <tr key={player}>
+        <td>{player}</td>
+        <td>{score}</td>
+      </tr>
+    ));
+  }, [players, currentPlayer, scores]);
 
   const toggleOpen = useCallback(() =>
-      setOpen(!open)
+    setOpen(!open)
   , [open, setOpen]);
 
   return (
     <div className="scoreboard" onClick={toggleOpen}>
-      <p>{text}</p>
-      {open && list}
+      <table>
+        <tbody>
+          {open ? list : list[0]}
+        </tbody>
+      </table>
     </div>
-  )
+  );
 };

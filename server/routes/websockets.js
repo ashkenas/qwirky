@@ -1,3 +1,4 @@
+import { application } from "express";
 import { getGame, makeMove, makeTrade } from "../data/games.js";
 
 const handler = f => function(data) {
@@ -40,7 +41,13 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
     // Data is valid, continue
     const [, fx, fy] = data.placed[0];
     let sameX = true, sameY = true;
-    if (!game.board) game.board = {};
+    let firstMove = false;
+    if (!game.board) {
+      firstMove = true;
+      game.board = {};
+    }
+    const scores = { x: {}, y: {} };
+    
     for (const [val, x, y] of data.placed) {
       const pIdx = hand.indexOf(val);
       if (pIdx === -1)
@@ -50,17 +57,27 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       if (game.board[x]?.[y])
         throw new Error('Invalid move. Cannot place a tile in an occupied space.');
 
+      if (!game.board[x])
+        game.board[x] = {};
+      game.board[x][y] = val;
+
       sameX &&= x === fx;
       sameY &&= y === fy;
+    }
+    if (!sameX && !sameY)
+      throw new Error('Invalid move. Tiles must be in same row or column.');
 
-      for (const dirs of [[[1, 0], [-1, 0]], [[0, 1], [0, -1]]]) {
+    for (const [val, x, y] of data.placed) {
+      for (const [dirs, axis] of [[[[1, 0], [-1, 0]], 'x'], [[[0, 1], [0, -1]], 'y']]) {
         let sameA = true, sameB = true;
+        let seen = 1;
         for (const [dirX, dirY] of dirs) {
           let curX = x + dirX, curY = y + dirY;
           let current = game.board[curX]?.[curY];
           while (current) {
             if (current === val)
               throw new Error('Invalid move. Duplicate tile in row or column.');
+            seen++;
             sameA &&= (current & 0xF) === (val & 0xF);
             sameB &&= (current & 0xF0) === (val & 0xF0);
             curX += dirX;
@@ -70,21 +87,27 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
         }
         if (!sameA && !sameB)
           throw new Error('Invalid move. Tiles must match in color or symbol.');
+
+        if (seen > 1)
+          scores[axis][axis === 'x' ? y : x] = seen === 6 ? 12 : seen;
       }
-
-      if (!game.board[x])
-        game.board[x] = {};
-      game.board[x][y] = val;
     }
-    if (!sameX && !sameY)
-      throw new Error('Invalid move. Tiles must be in same row or column.');
 
-    const newState = await makeMove(gameId, data.placed);
+    let score = 0;
+    if (firstMove && data.placed.length === 1) score = 1;
+    else {
+      for (const axis in scores)
+        for (const coord in scores[axis])
+          score += scores[axis][coord];
+    }
+
+    const newState = await makeMove(gameId, data.placed, score);
     for (const player in players) {
       const payload = {
         type: 'move',
         placed: data.placed,
         currentPlayer: newState.currentPlayer,
+        score: score,
         yourTurn: newState.players[newState.currentPlayer].equals(player)
       };
 
@@ -131,7 +154,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
 });
 
 export async function gameInitialize(ws, gameId, senderId) {
-  const game = await getGame(gameId);
+  const game = await getGame(gameId, true);
   const idx = game.players.findIndex(id => id.equals(senderId));
   ws.send(JSON.stringify({
     type: 'initialize',
@@ -139,6 +162,7 @@ export async function gameInitialize(ws, gameId, senderId) {
     currentPlayer: game.currentPlayer,
     hand: game.hands[idx],
     players: game.usernames,
-    yourTurn: idx === game.currentPlayer
+    yourTurn: idx === game.currentPlayer,
+    scores: game.scores
   }));
 };

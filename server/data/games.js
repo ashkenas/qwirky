@@ -44,30 +44,14 @@ export const createGame = async players => {
     return [oldMaxRank, maxI];
   }, [0, -1])[1];
 
-  let usernames = (await usersCol.aggregate([
-    { $match: { _id: { $in: players } } },
-    { $project: { username: 1 } }
-  ]).toArray());
-  for (let i = 0; i < usernames.length;) {
-    if (usernames[i].idx !== undefined) {
-      i++;
-    } else {
-      const j = usernames[i].idx = players.findIndex(id =>
-        id.equals(usernames[i]._id)
-      );
-      [usernames[i], usernames[j]] = [usernames[j], usernames[i]];
-    }
-  }
-  usernames = usernames.map(user => user.username);
-
   const res = await col.insertOne({
     board: null,
     name: name,
     pieces: pieces,
     players: players,
-    usernames: usernames,
     hands: hands,
-    currentPlayer: firstPlayer
+    currentPlayer: firstPlayer,
+    scores: players.map(() => 0)
   });
 
   if (!res.acknowledged || !res.insertedId)
@@ -86,22 +70,45 @@ export const createGame = async players => {
 
 export const getGames = async uid => {
   const user = await getUserByUid(uid);
-  const col = await games();
-  const gamesResults = await col.aggregate([
-    { $match: { _id: { $in: user.games } } },
-    { $project: { name: 1, usernames: 1, currentPlayer: 1 } }
-  ]).toArray();
+  // const col = await games();
+  // const gamesResults = await col.aggregate([
+  //   { $match: { _id: { $in: user.games } } },
+  //   { $project: { name: 1, usernames: 1, currentPlayer: 1 } }
+  // ]).toArray();
+  const gamesResults = [];
+  for (const game of user.games)
+    gamesResults.push(await getGame(game, true));
   return gamesResults;
 };
 
-export const getGame = async id => {
+export const getGame = async (id, withUsernames) => {
   id = forceObjectId(id);
   const col = await games();
+  const usersCol = await users();
   const game = await col.findOne({ _id: id });
+  
+  if (withUsernames) {
+    const usernames = (await usersCol.aggregate([
+      { $match: { _id: { $in: game.players } } },
+      { $project: { username: 1 } }
+    ]).toArray());
+    for (let i = 0; i < usernames.length;) {
+      if (usernames[i].idx !== undefined) {
+        i++;
+      } else {
+        const j = usernames[i].idx = game.players.findIndex(id =>
+          id.equals(usernames[i]._id)
+        );
+        [usernames[i], usernames[j]] = [usernames[j], usernames[i]];
+      }
+    }
+    game.usernames = usernames.map(user => user.username);
+  }
+
   return game;
 };
 
-export const makeMove = async (id, placed) => {
+export const makeMove = async (id, placed, score) => {
   id = forceObjectId(id);
   const game = await getGame(id);
   if (!game.board) game.board = {};
@@ -115,6 +122,7 @@ export const makeMove = async (id, placed) => {
   }
   const draw = game.pieces.splice(0, placed.length);
   game.hands[game.currentPlayer] = hand.concat(draw);
+  game.scores[game.currentPlayer] += score;
 
   const col = await games();
   const res = await col.updateOne(
@@ -124,7 +132,8 @@ export const makeMove = async (id, placed) => {
         board: game.board,
         currentPlayer: (game.currentPlayer + 1) % game.players.length,
         pieces: game.pieces,
-        hands: game.hands
+        hands: game.hands,
+        scores: game.scores
       }
     }
   );
