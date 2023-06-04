@@ -31,9 +31,12 @@ export default function Friends() {
   if (loading && !data) return <Loading />;
 
   return (<>
-    <Link to="/dash" className="back" aria-label="back" />
+    <Link to="/dash" className="back is-desktop" aria-label="back" />
     <div className="columns">
       <div className="column">
+        <Link to="/dash" className="back is-mobile" aria-label="back">
+          Back
+        </Link>
         <h1>Add Friend</h1>
         <div>
           <input type="text" value={name} onChange={onNameChange}

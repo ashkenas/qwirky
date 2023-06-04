@@ -57,6 +57,8 @@ $color6: #9d00ff;
 
 $back-arrow-width: 6px;
 $back-arrow-half-width: math.div($back-arrow-width, 2);
+$back-arrow-height: 18px;
+$back-arrow-offset: math.div($back-arrow-height - $back-arrow-width, 2.828);
 
 .back {
   @include button($color5);
@@ -69,9 +71,45 @@ $back-arrow-half-width: math.div($back-arrow-width, 2);
   border-radius: 8px;
   text-decoration: none;
   
+  &::after, &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: $back-arrow-width;
+    border-radius: $back-arrow-half-width;
+    height: $back-arrow-height;
+    left: calc(50% - $back-arrow-half-width - $back-arrow-offset);
+  }
+
+  &.is-mobile {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    padding: 1rem 1rem 1rem 3rem;
+    color: $text-color;
+    vertical-align: middle;
+    font-size: 1.25rem;
+
+    &::after, &::before {
+      left: 1rem;
+    }
+  }
+  
   &::after {
-    content: 'back';
-    color:white;
+    content: '';
+    bottom: calc(50% - $back-arrow-half-width);
+    background-color: $text-color;
+    transform-origin: 50% calc(100% - $back-arrow-half-width);
+    transform: rotate(45deg);
+  }
+
+  &::before {
+    top: calc(50% - $back-arrow-half-width);
+    background-color: $text-color;
+    transform-origin: 50% $back-arrow-half-width;
+    transform: rotate(315deg);
   }
 }
 
@@ -101,6 +139,12 @@ $back-arrow-half-width: math.div($back-arrow-width, 2);
   }
 }
 
+@media (min-width: 961px), screen and (orientation: landscape) {
+  .is-mobile {
+    display: none;
+  }
+}
+
 @media (max-width: 960px), screen and (orientation: portrait) {
   .columns {
     flex-flow: column nowrap;
@@ -111,5 +155,9 @@ $back-arrow-half-width: math.div($back-arrow-width, 2);
       margin: 0 0 1rem 0;
       flex: 0;
     }
-  }  
+  }
+
+  .is-desktop {
+    display: none;
+  }
 }
