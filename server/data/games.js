@@ -148,7 +148,9 @@ export const makeTrade = async (id, pieces) => {
   const game = await getGame(id);
 
   const hand = [...game.hands[game.currentPlayer]];
+  const recycle = [];
   for (const val of pieces) {
+    recycle.push(val);
     hand.splice(hand.indexOf(val), 1);
   }
   const draw = game.pieces.splice(0, pieces.length);
@@ -161,7 +163,7 @@ export const makeTrade = async (id, pieces) => {
       $set: {
         board: game.board,
         currentPlayer: (game.currentPlayer + 1) % game.players.length,
-        pieces: game.pieces,
+        pieces: shuffle(game.pieces.concat(recycle)),
         hands: game.hands
       }
     }
