@@ -103,13 +103,25 @@ export const gameReducer = (state, action) => {
     };
     newState.hand.splice(state.selected, 1);
 
-    // Validate piece placement
     let sameX = true, sameY = true;
+    let minX = x, maxX = x, minY = y, maxY = y;
     for (const [, px, py] of state.placed) {
       sameX &&= x === px;
       sameY &&= y === py;
+      if (px < minX) minX = px;
+      if (px > maxX) maxX = px;
+      if (py < minY) minY = py;
+      if (py > maxY) maxY = py;
     }
     if (!sameX && !sameY) return { ...state };
+    if (sameX)
+      for (let i = minY; i <= maxY; i++)
+        if (i !== y && !newState.board[x][i])
+          return { ...state };
+    if (sameY)
+      for (let i = minX; i <= maxX; i++)
+        if (i !== x && !newState.board[i]?.[y])
+          return { ...state };
 
     for (const dirs of [[[1, 0], [-1, 0]], [[0, 1], [0, -1]]]) {
       let sameA = true, sameB = true;

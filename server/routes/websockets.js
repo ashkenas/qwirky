@@ -2,12 +2,12 @@ import { application } from "express";
 import { getGame, makeMove, makeTrade } from "../data/games.js";
 
 const handler = f => function(data) {
-  f(JSON.parse(data)).catch((e) => (console.error(e),this.send(
+  f(JSON.parse(data)).catch((e) => this.send(
     JSON.stringify({
       type: 'error',
       error: e.message || 'Internal Server Error'
     })
-  )));
+  ));
 };
 
 export const gameMessage = (gameId, senderId, players) => handler(async data => {
@@ -40,7 +40,6 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
 
     // Data is valid, continue
     const [, fx, fy] = data.placed[0];
-    let sameX = true, sameY = true;
     let firstMove = false;
     if (!game.board) {
       firstMove = true;
@@ -48,6 +47,8 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
     }
     const scores = { x: {}, y: {} };
     
+    let sameX = true, sameY = true;
+    let minX = fx, minY = fy, maxX = fx, maxY = fy;
     for (const [val, x, y] of data.placed) {
       const pIdx = hand.indexOf(val);
       if (pIdx === -1)
@@ -63,9 +64,21 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
 
       sameX &&= x === fx;
       sameY &&= y === fy;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
     }
     if (!sameX && !sameY)
-      throw new Error('Invalid move. Tiles must be in same row or column.');
+      throw new Error('Invalid move. Tiles must be in the same line.');
+    if (sameX)
+      for (let i = minY; i <= maxY; i++)
+        if (!game.board[fx][i])
+          throw new Error('Invalid move. Tiles must be in the same line.');
+    if (sameY)
+      for (let i = minX; i <= maxX; i++)
+        if (!game.board[i]?.[fy])
+          throw new Error('Invalid move. Tiles must be in the same line.');
 
     for (const [val, x, y] of data.placed) {
       for (const [dirs, axis] of [[[[1, 0], [-1, 0]], 'x'], [[[0, 1], [0, -1]], 'y']]) {
