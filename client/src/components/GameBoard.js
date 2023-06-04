@@ -63,24 +63,30 @@ export default function GameBoard() {
     setMoving(false);
   }, [moving, setMoving]);
 
+  const onWheel = useCallback((e) => {
+    const newScale = coords.current[2] * (e.deltaY < 0 ? 1.1 : .91); 
+    if (newScale < .2 || newScale > 5) return;
+    coords.current[2] = newScale;
+    centerRef.current.style.setProperty('--scale', coords.current[2]);
+  }, []);
+
   useEffect(() => {
     if (!centerRef.current || ! boardRef.current) return;
     const boardElement = boardRef.current;
     let lastTouches = null;
     const touchListener = (e) => {
       if (lastTouches && lastTouches.length === e.touches.length) {
+        e.preventDefault();
         if (e.touches.length === 1) {
           e.movementX = e.touches[0].pageX - lastTouches[0].pageX;
           e.movementY = e.touches[0].pageY - lastTouches[0].pageY;
           move(e);
-        } else {
-          e.preventDefault();
-          if (e.touches.length === 2) {
-            const r = Math.sqrt(distSq(...e.touches) / distSq(...lastTouches));
-            const newScale = coords.current[2] * r;
-            if (newScale > .2 && newScale < 5) coords.current[2] = newScale;
-            centerRef.current.style.setProperty('--scale', coords.current[2]);
-          }
+        } else if (e.touches.length === 2) {
+          const r = Math.sqrt(distSq(...e.touches) / distSq(...lastTouches));
+          const newScale = coords.current[2] * r;
+          if (newScale < .2 || newScale > 5) return;
+          coords.current[2] = newScale;
+          centerRef.current.style.setProperty('--scale', coords.current[2]);
         }
       }
       lastTouches = e.touches;
@@ -99,7 +105,7 @@ export default function GameBoard() {
 
   return (
     <div className="game-board" ref={boardRef} onMouseMove={move}
-      onClickCapture={doneMoving}>
+      onClickCapture={doneMoving} onWheel={onWheel}>
       <div className="center-piece" ref={centerRef}>
         {pieces}
       </div>
