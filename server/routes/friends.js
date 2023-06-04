@@ -11,7 +11,7 @@ router.route('/')
   .post(sync(async (req, res) => {
     if (!req.body.username)
       throw new StatusError(400, 'Must provide a username.');
-    await users.makeFriendRequest(req.firebaseId, req.body.username.trim());
+    await users.makeFriendRequest(req.firebaseId, req.body.username.trim().toLowerCase());
     res.sendStatus(200);
   }));
 
