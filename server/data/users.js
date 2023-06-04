@@ -99,6 +99,8 @@ export const makeFriendRequest = async (uid, username) => {
   const friend = await getUserByUsername(username);
   if (!friend) throw new StatusError(404, 'User not found.');
   const user = await getUserByUid(uid);
+  if (user._id.equals(friend._id))
+    throw new StatusError(400, 'You cannot friend yourself.');
   const col = await users();
   if (user.requests.some(fid => fid.equals(friend._id)))
     return await acceptFriendRequest(uid, friend._id);
