@@ -45,7 +45,10 @@ export default function NewGame() {
   return (
     <div className="columns">
       <div className="column">
-        <Link to="/dash" className="back" aria-label="back" />
+        <Link to="/dash" className="back is-desktop" aria-label="back" />
+        <Link to="/dash" className="back is-mobile" aria-label="back">
+          Back
+        </Link>
         <h1>New Game</h1>
         <p>You can select up to {remaining} more friend{remaining !== 1 && 's'} to play with you.</p>
         {(loading && !friends) ? <Loading inline /> : friends.friends.map(f => {
