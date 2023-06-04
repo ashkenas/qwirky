@@ -22,7 +22,8 @@ export default function Friends() {
     setName(e.target.value);
   }, [setName]);
 
-  const clickAddFriend = useCallback(() => {
+  const submitAddFriend = useCallback((e) => {
+    e.preventDefault();
     if (addLoading) return;
     addFriend({ username: name })
   }, [addLoading, addFriend, name]);
@@ -38,14 +39,12 @@ export default function Friends() {
           Back
         </Link>
         <h1>Add Friend</h1>
-        <div>
+        <form className="friend-control" onSubmit={submitAddFriend}>
           <input type="text" value={name} onChange={onNameChange}
             onBlur={onNameChange} className="friend-input" />
-          <button onClick={clickAddFriend} className="friend-submit">
-            Add
-          </button>
-        </div>
-        <h1>Friend Requests</h1>
+          <input type="submit" value="Add" className="friend-submit" />
+        </form>
+        {data.requests.length > 0 && <h1>Friend Requests</h1>}
         {data.requests.map(f=> <FriendRequest key={f._id} friend={f} refetch={refetch} />)}
       </div>
       <div className="column">

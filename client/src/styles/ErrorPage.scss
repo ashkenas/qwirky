@@ -27,7 +27,7 @@
     }
   
     a {
-      @include button($buttons);
+      @include button($color6);
       margin: 1rem 0 0 0;
       padding: 1rem;
       border-radius: 8px;

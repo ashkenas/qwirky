@@ -2,13 +2,12 @@
 @use "sass:math";
 
 $text-color: #efefef;
-$buttons: #a45fb9;
-$color1: #dc2727;
-$color2: #eb8b0e;
+$color1: #e53434;
+$color2: #f2a035;
 $color3: #e8d939;
-$color4: #40ae15;
+$color4: #64c553;
 $color5: #569CD6;
-$color6: #9d00ff;
+$color6: #a45fb9;
 
 @mixin button($bg) {
   background-color: $bg;

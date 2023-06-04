@@ -1,6 +1,13 @@
 @import "_base";
 
+.friend-control {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
 .friend-input {
+  display: flex;
+  flex: 1;
   font-size: 1rem;
   padding: .5rem;
   border: 1px solid grey;
@@ -20,6 +27,12 @@
   border: 1px solid grey;
   border-left: none;
   font-size: 1rem;
+  color: $text-color;
+  background-color: $color4;
+
+  &:hover {
+    background-color: scale-color($color4, $blackness: 5%);
+  }
 }
 
 .friend {
