@@ -1,4 +1,3 @@
-import { application } from "express";
 import { getGame, makeMove, makeTrade } from "../data/games.js";
 
 const handler = f => function(data) {
@@ -12,6 +11,8 @@ const handler = f => function(data) {
 
 export const gameMessage = (gameId, senderId, players) => handler(async data => {
   const game = await getGame(gameId);
+  if (game.over)
+    throw new Error('Game is over.');
   const idx = game.players.findIndex(id => id.equals(senderId));
   if (idx !== game.currentPlayer)
     throw new Error('It is not your turn.');
@@ -130,6 +131,8 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       players[player].send(JSON.stringify(payload));
     }
   } else if (data.type === 'trade') {
+    if (game.pieces.length === 0)
+      throw new Error('No more tiles, cannot trade.');
     if (!data.pieces) throw new Error('Must provide tiles to trade.');
     if (typeof data.pieces !== 'object' || !Array.isArray(data.pieces))
       throw new Error('Pieces property must be an array of tile values.');

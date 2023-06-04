@@ -51,7 +51,8 @@ export const createGame = async players => {
     players: players,
     hands: hands,
     currentPlayer: firstPlayer,
-    scores: players.map(() => 0)
+    scores: players.map(() => 0),
+    over: false
   });
 
   if (!res.acknowledged || !res.insertedId)
@@ -133,7 +134,8 @@ export const makeMove = async (id, placed, score) => {
         currentPlayer: (game.currentPlayer + 1) % game.players.length,
         pieces: game.pieces,
         hands: game.hands,
-        scores: game.scores
+        scores: game.scores,
+        over: game.hands[game.currentPlayer].length === 0
       }
     }
   );
