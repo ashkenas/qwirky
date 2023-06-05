@@ -32,9 +32,13 @@ export const createGame = async players => {
   const pieces = shuffle([...fullPieceSet]);
   const hands = players.map(() => pieces.splice(0, 6));
   const firstPlayer = hands.reduce(([oldMaxRank, maxI], hand, i) => {
+    const dedupe = hand.reduce((newHand, tile) => {
+      if (!newHand.includes(tile)) newHand.push(tile);
+      return newHand;
+    }, []);
     let maxRank = 0;
     const ranks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    hand.forEach(piece => {
+    dedupe.forEach(piece => {
       const a = ++ranks[(piece >> 4) - 1];
       if (a > maxRank) maxRank = a;
       const b = ++ranks[(piece & 0xF) + 5];
