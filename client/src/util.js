@@ -20,18 +20,19 @@ export function useStoredData(url, initialState) {
 export function useWebSocket(dispatch) {
   const user = useContext(AuthContext);
   const [ws, setWS] = useState(null);
-  const [message, setMessage] = useState('Connecting');
+  const [message, setMessage] = useState('Connecting...');
 
   useEffect(() => {
     const { host, pathname } = window.location;
     let ws;
-    let timeout = 1000;
+    let retryIn = 1;
     let ignore = false;
     const attempt = (retry) => {
       auth.currentUser?.getIdToken().then(async token => {
         ws = new WebSocket(`ws://${host}${pathname}`, token);
         ws.addEventListener('open', () => {
           retry = false;
+          retryIn = 1;
           setWS(ws);
         });
         ws.addEventListener('message', ({ data }) => {
@@ -40,8 +41,9 @@ export function useWebSocket(dispatch) {
         ws.addEventListener('close', () => {
           if (ignore) return;
           setWS(null);
-          setMessage(retry ? 'Retrying' : 'Reconnecting');
-          setTimeout(() => attempt(true), Math.min(30000, timeout += timeout));
+          let timeout = retry ? Math.min(30, retryIn += retryIn) : 0;
+          setMessage(retry ? `Retrying in ${timeout}s...` : 'Reconnecting...');
+          setTimeout(() => attempt(true), timeout * 1000);
         });
       });
     };
