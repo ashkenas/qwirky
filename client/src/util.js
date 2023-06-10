@@ -19,27 +19,41 @@ export function useStoredData(url, initialState) {
 
 export function useWebSocket(dispatch) {
   const user = useContext(AuthContext);
-  const [loading, setLoading] = useState(true);
   const [ws, setWS] = useState(null);
+  const [message, setMessage] = useState('Connecting');
 
   useEffect(() => {
     const { host, pathname } = window.location;
     let ws;
-    auth.currentUser?.getIdToken().then(async token => {
-      ws = new WebSocket(`ws://${host}${pathname}`, token);
-      ws.addEventListener('open', () => setLoading(false));
-      ws.addEventListener('message', ({ data }) => {
-        dispatch(JSON.parse(data));
+    let timeout = 1000;
+    let ignore = false;
+    const attempt = (retry) => {
+      auth.currentUser?.getIdToken().then(async token => {
+        ws = new WebSocket(`ws://${host}${pathname}`, token);
+        ws.addEventListener('open', () => {
+          retry = false;
+          setWS(ws);
+        });
+        ws.addEventListener('message', ({ data }) => {
+          dispatch(JSON.parse(data));
+        });
+        ws.addEventListener('close', () => {
+          if (ignore) return;
+          setWS(null);
+          setMessage(retry ? 'Retrying' : 'Reconnecting');
+          setTimeout(() => attempt(true), Math.min(30000, timeout += timeout));
+        });
       });
-      setWS(ws);
-    });
+    };
+    attempt();
     return () => {
+      ignore = true;
       ws.close();
       setWS(null);
     };
-  }, [user, dispatch, setLoading, setWS]);
+  }, [user, dispatch, setWS, setMessage]);
 
-  return [ws, loading];
+  return [ws, message];
 }
 
 export function useData(url, options = {}) {

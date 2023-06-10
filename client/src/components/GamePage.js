@@ -9,9 +9,9 @@ import Scoreboard from "./Scoreboard";
 
 export default function GamePage() {
   const dispatch = useContext(GameDispatchContext)
-  const [ws, loading] = useWebSocket(dispatch);
+  const [ws, message] = useWebSocket(dispatch);
 
-  if (loading) return <Loading />;
+  if (!ws) return <Loading message={message}/>;
 
   return (<>
     <GameBoard />

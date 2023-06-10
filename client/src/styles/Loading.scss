@@ -1,15 +1,21 @@
 @import "_base";
 
 .loading-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: fixed;
-  top: calc(50vh - 2.5rem);
+  top: 0;
   width: 100%;
+  height: 100%;
+  backdrop-filter: blur(3px);
 
   &.inline {
     position: static;
   }
 
-  &::after {
+  &::before {
     content: '';
     display: block;
     width: 5rem;

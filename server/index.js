@@ -110,10 +110,12 @@ server.on('upgrade', async (req, socket, head) => {
 wss.on('connection', (ws, req) => {
   if (!gameClients.get(req.game)) {
     gameClients.set(req.game, {
-      [ws.id]: ws
+      [ws.id]: [ws]
     });
   } else {
-    gameClients.get(req.game)[ws.id] = ws;
+    const userClients = gameClients.get(req.game)[ws.id];
+    if (userClients) userClients.push(ws);
+    else gameClients.get(req.game)[ws.id] = [ws];
   }
 
   ws.on('pong', () => ws.isAlive = true);
@@ -122,7 +124,10 @@ wss.on('connection', (ws, req) => {
     websockets.gameMessage(req.game, ws.id, gameClients.get(req.game)));
 
   ws.on('close', () => {
-    delete gameClients.get(req.game)[ws.id];
+    const userClients = gameClients.get(req.game)[ws.id];
+    const idx = userClients.indexOf(ws);
+    if (idx !== -1)
+      userClients.splice(userClients.indexOf(ws), 1);
   });
 
   websockets.gameInitialize(ws, req.game, ws.id);
