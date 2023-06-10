@@ -138,6 +138,8 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       throw new Error('Pieces property must be an array of tile values.');
     if (data.pieces.length < 1)
       throw new Error('Must provide at least one tile to trade.');
+    if (game.pieces.length < data.pieces.length)
+      throw new Error('Not enough tiles left for this trade.');
     for (const val of data.pieces) {
       if (typeof val !== 'number' || isNaN(val) || Math.floor(val) !== val)
         throw new Error(`Invalid tile value encountered: ${val}`);
@@ -179,6 +181,7 @@ export async function gameInitialize(ws, gameId, senderId) {
     hand: game.hands[idx],
     players: game.usernames,
     yourTurn: idx === game.currentPlayer,
-    scores: game.scores
+    scores: game.scores,
+    tilesLeft: game.pieces.length
   }));
 };

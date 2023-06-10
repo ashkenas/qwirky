@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { GameDispatchContext } from "../contexts/GameContext";
 import Loading from "./Loading";
 import Scoreboard from "./Scoreboard";
+import TileCounter from "./TileCounter";
 
 export default function GamePage() {
   const dispatch = useContext(GameDispatchContext)
@@ -17,6 +18,7 @@ export default function GamePage() {
     <GameBoard />
     <Controls ws={ws} />
     <Scoreboard />
+    <TileCounter />
     <Link to="/dash" className="back" />
   </>);
 };
