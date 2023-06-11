@@ -41,30 +41,32 @@ export default function Controls({ ws }) {
 
   return (
     <div class="controls">
-      <div className="rack">
-        {hand.map((val, x) =>
-          <Gamepiece key={x} value={val} x={x} selected={x === selected}
-            racked highlight={trading && toTrade.includes(x)} />
-        )}
-      </div>
-      <div className="buttons">
-        {tilesLeft > 0 && placed.length === 0 && !trading &&
-          <button className="trade" onClick={doStartTrade}>
-            Start Trade
-          </button>
-        }
-        {trading && (<>
-          <button className="btn-1" onClick={doCancelTrade}>
-            Cancel
-          </button>
-          <button className="btn-2" onClick={doTrade}>Trade</button>
-        </>)}
-        {placed.length > 0 && (<>
-          <button className="btn-1" onClick={() => dispatch(pickup())}>
-            Undo
-          </button>
-          <button className="btn-2" onClick={submit}>Submit</button>
-        </>)}
+      <div class="controls-content">
+        <div className="rack">
+          {hand.map((val, x) =>
+            <Gamepiece key={x} value={val} x={x} selected={x === selected}
+              racked highlight={trading && toTrade.includes(x)} />
+          )}
+        </div>
+        <div className="buttons">
+          {tilesLeft > 0 && placed.length === 0 && !trading &&
+            <button className="trade" onClick={doStartTrade}>
+              Start Trade
+            </button>
+          }
+          {trading && (<>
+            <button className="btn-1" onClick={doCancelTrade}>
+              Cancel
+            </button>
+            <button className="btn-2" onClick={doTrade}>Trade</button>
+          </>)}
+          {placed.length > 0 && (<>
+            <button className="btn-1" onClick={() => dispatch(pickup())}>
+              Undo
+            </button>
+            <button className="btn-2" onClick={submit}>Submit</button>
+          </>)}
+        </div>
       </div>
     </div>
   );

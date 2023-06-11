@@ -27,6 +27,17 @@ $arrow-width: 4px;
   }
 }
 
+h1.has-input {
+  display: flex;
+  flex-flow: row nowrap;
+
+  input {
+      display: flex;
+      flex: 1;
+      font-size: 1em;
+  }
+}
+
 $arrow-half-width: math.div($arrow-width, 2);
 
 .navbtn {

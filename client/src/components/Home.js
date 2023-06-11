@@ -16,16 +16,25 @@ export default function Home() {
   }, [user, navigate, params]);
 
   return (
-    <div className="container">
-      <h1>Qwirky</h1>
-      <p>
-        A fun online multiplayer tile matching game.
-        Score the most points to win!
-      </p>
-      <button className="social-btn" onClick={() => signInWithPopup(auth, googleProvider)}>
-        <img src="/google-signin.svg" alt="Sign in with Google"/>
-        Sign in with Google
-      </button>
+    <div className="columns homepage">
+      <div className="column">
+        <h1 className="title">
+          <span className="color1">Q</span>
+          <span className="color2">w</span>
+          <span className="color3">i</span>
+          <span className="color4">r</span>
+          <span className="color5">k</span>
+          <span className="color6">y</span>
+        </h1>
+        <p>
+          A fun online multiplayer tile matching game.
+          Score the most points to win!
+        </p>
+        <button className="social-btn" onClick={() => signInWithPopup(auth, googleProvider)}>
+          <img src="/google-signin.svg" alt="Sign in with Google"/>
+          Sign in with Google
+        </button>
+      </div>
     </div>
   );
 };

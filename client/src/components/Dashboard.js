@@ -43,7 +43,11 @@ export default function Dashboard() {
   return (
     <div className="columns">
       <div className="column">
-        <h1>Hello, {editing ? <input type="text" value={name} onChange={onNameChange} onBlur={onNameChange} /> : name}</h1>
+        <h1 className="has-input">
+          Hello,
+          {!editing && name}
+          {editing && <input type="text" value={name} onChange={onNameChange} onBlur={onNameChange} />}
+        </h1>
         <button onClick={editClicked}
           className={`navbtn d${editLoading ? ' loading' : ''}`}>
           {editing ? 'Save' : 'Change Name'}

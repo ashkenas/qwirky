@@ -1,6 +1,11 @@
+@use "sass:math";
 @import "_base";
 
-$colors: $color1, $color2, $color3, $color4, $color5, $color6;
+$stripe-count: 8;
+$tile-size: 5em;
+
+$stripe-width: math.div($tile-size * 1.414, $stripe-count);
+$stripe-width-double: $stripe-width * 2;
 
 @mixin sym-1($color) {
   top: 20%;
@@ -52,17 +57,33 @@ div.piece {
   position: absolute;
   display: inline-block;
   background-color: black;
-  height: 5em;
-  width: 5em;
+  height: $tile-size;
+  width: $tile-size;
+  animation: piece-placed .1s linear 1;
+}
+
+@keyframes piece-placed {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
 }
 
 div.piece.placing {
-  background-color: #444444;
+  background: repeating-linear-gradient(135deg, #444444, #444444 $stripe-width, #000000 $stripe-width, #000000 $stripe-width-double);
 };
 
 div.piece.highlight {
-  background: repeating-linear-gradient(135deg, #444444, #444444 10px, #000000 10px, #000000 20px);
+  background: repeating-linear-gradient(135deg, #444444, #444444 $stripe-width, #000000 $stripe-width, #000000 $stripe-width-double);
+  background-size: 200% 200%;
+  animation: moving-gradient 3s linear infinite reverse;
 };
+
+@keyframes moving-gradient {
+  100% {
+    background-position: 100%, 100%;
+  }
+}
 
 div.piece.selected {
   transform: translateY(-.5em);
