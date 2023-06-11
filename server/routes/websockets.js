@@ -167,7 +167,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       if (senderId.equals(player))
         payload.hand = newState.hands[idx];
 
-      players[player].send(JSON.stringify(payload));
+      players[player].forEach(ws => ws.send(JSON.stringify(payload)));
     }
   }
 });
