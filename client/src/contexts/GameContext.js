@@ -13,7 +13,8 @@ export const GameContext = createContext({
   players: [],
   currentPlayer: -1,
   scores: [],
-  tilesLeft: 0
+  tilesLeft: 0,
+  over: false
 });
 
 export const GameDispatchContext = createContext(null);
@@ -31,7 +32,8 @@ const initialState = {
   players: [],
   currentPlayer: -1,
   scores: [],
-  tilesLeft: 0
+  tilesLeft: 0,
+  over: false
 };
 
 export function GameProvider({ children }) {
@@ -61,7 +63,8 @@ export const gameReducer = (state, action) => {
       players: action.players,
       currentPlayer: action.currentPlayer,
       scores: action.scores,
-      tilesLeft: action.tilesLeft
+      tilesLeft: action.tilesLeft,
+      over: action.over
     };
   } else if (action.type === 'move') {
     const newState = {
@@ -73,8 +76,12 @@ export const gameReducer = (state, action) => {
       trading: false,
       toTrade: [],
       currentPlayer: action.currentPlayer,
-      tilesLeft: state.tilesLeft - action.placed.length
+      tilesLeft: state.tilesLeft - action.placed.length,
+      over: action.over
     };
+
+    if (newState.tilesLeft < 0)
+      newState.tilesLeft = 0;
 
     if (!newState.board)
       newState.board = {};
@@ -92,7 +99,7 @@ export const gameReducer = (state, action) => {
 
     return newState;
   } else if (action.type === 'placePiece') {
-    if (state.trading) return { ...state };
+    if (state.trading || state.over) return { ...state };
     const val = state.hand[state.selected];
     const { x, y } = action;
     if (!state.yourTurn || !val || (state.board && state.board[x]?.[y]))
@@ -149,7 +156,8 @@ export const gameReducer = (state, action) => {
 
     return newState;
   } else if (action.type === 'startTrade') {
-    if (!state.yourTurn) return { ...state };
+    if (!state.yourTurn || state.over || !state.tilesLeft)
+      return { ...state };
     return { ...state, trading: true };
   } else if (action.type === 'cancelTrade') {
     return { ...state, trading: false, toTrade: [] };

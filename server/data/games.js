@@ -116,6 +116,7 @@ export const getGame = async (id, withUsernames) => {
 export const makeMove = async (id, placed, score) => {
   id = forceObjectId(id);
   const game = await getGame(id);
+  if (game.over) throw new Error('Game over, cannot move.');
   if (!game.board) game.board = {};
 
   const hand = [...game.hands[game.currentPlayer]];
@@ -128,7 +129,10 @@ export const makeMove = async (id, placed, score) => {
   const draw = game.pieces.splice(0, placed.length);
   game.hands[game.currentPlayer] = hand.concat(draw);
   game.scores[game.currentPlayer] += score;
-
+  
+  const over = game.hands[game.currentPlayer].length === 0;
+  if (over) game.scores[game.currentPlayer] += 6;
+  
   const col = await games();
   const res = await col.updateOne(
     { _id: id },
@@ -139,7 +143,7 @@ export const makeMove = async (id, placed, score) => {
         pieces: game.pieces,
         hands: game.hands,
         scores: game.scores,
-        over: game.hands[game.currentPlayer].length === 0
+        over: over
       }
     }
   );
@@ -152,6 +156,7 @@ export const makeMove = async (id, placed, score) => {
 export const makeTrade = async (id, pieces) => {
   id = forceObjectId(id);
   const game = await getGame(id);
+  if (game.over) throw new Error('Game over, cannot trade.');
 
   const hand = [...game.hands[game.currentPlayer]];
   const recycle = [];

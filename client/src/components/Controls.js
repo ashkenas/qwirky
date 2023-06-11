@@ -4,7 +4,7 @@ import Gamepiece from "./Gamepiece";
 import "../styles/Controls.scss";
 
 export default function Controls({ ws }) {
-  const { hand, selected, placed, trading, toTrade } = useContext(GameContext);
+  const { hand, selected, placed, trading, toTrade, tilesLeft } = useContext(GameContext);
   const dispatch = useContext(GameDispatchContext);
 
   const submit = useCallback(() => {
@@ -48,7 +48,7 @@ export default function Controls({ ws }) {
         )}
       </div>
       <div className="buttons">
-        {placed.length === 0 && !trading &&
+        {tilesLeft > 0 && placed.length === 0 && !trading &&
           <button className="trade" onClick={doStartTrade}>
             Start Trade
           </button>

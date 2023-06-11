@@ -122,7 +122,8 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
         placed: data.placed,
         currentPlayer: newState.currentPlayer,
         score: score,
-        yourTurn: newState.players[newState.currentPlayer].equals(player)
+        yourTurn: newState.players[newState.currentPlayer].equals(player),
+        over: newState.over
       };
 
       if (senderId.equals(player))
@@ -182,6 +183,7 @@ export async function gameInitialize(ws, gameId, senderId) {
     players: game.usernames,
     yourTurn: idx === game.currentPlayer,
     scores: game.scores,
-    tilesLeft: game.pieces.length
+    tilesLeft: game.pieces.length,
+    over: game.over
   }));
 };
