@@ -1,6 +1,16 @@
 import { getGame, makeMove, makeTrade } from "../data/games.js";
 
 const handler = f => function(data) {
+  let parsed;
+  try {
+    parsed = JSON.parse(data);
+  } catch (e) {
+    this.send(JSON.stringify({
+      type: 'error',
+      error: 'Malformed data encountered, bad request.'
+    }));
+    return;
+  }
   f(JSON.parse(data)).catch((e) => this.send(
     JSON.stringify({
       type: 'error',
