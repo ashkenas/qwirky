@@ -1,4 +1,5 @@
 import { getGame, makeMove, makeTrade } from "../data/games.js";
+import { StatusError } from "../util.js";
 
 const handler = f => function(data) {
   let parsed;
@@ -131,7 +132,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
         type: 'move',
         placed: data.placed,
         currentPlayer: newState.currentPlayer,
-        score: score,
+        score: newState.scores[game.currentPlayer],
         yourTurn: newState.players[newState.currentPlayer].equals(player),
         over: newState.over
       };
