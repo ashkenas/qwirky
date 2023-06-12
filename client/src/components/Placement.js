@@ -9,8 +9,10 @@ export default function Placement({ x, y }) {
     dispatch(placePiece(x, y));
   }, [x, y, dispatch])
 
+  const center = x === 0 && y === 0;
+
   return (
-    <button className={`placement`} onClick={onClick}
+    <button className={`placement${center ? ' hover' : ''}`} onClick={onClick}
       style={{ top: `${-y}00%`, left: `${x}00%` }}></button>
   );
 }

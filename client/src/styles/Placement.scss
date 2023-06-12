@@ -1,7 +1,13 @@
 button.placement {
   position: absolute;
   display: block;
-  border: 2px dashed grey;
+  border: none;
+  background-color: inherit;
   height: 5rem;
   width: 5rem;
+  transition: .2s background-color;
+
+  &:hover, &.hover {
+    background-color: #555555;
+  }
 }
