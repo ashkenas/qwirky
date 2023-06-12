@@ -6,6 +6,7 @@ button.placement {
   height: 5rem;
   width: 5rem;
   transition: .2s background-color;
+  cursor: pointer;
 
   &:hover, &.hover {
     background-color: #555555;

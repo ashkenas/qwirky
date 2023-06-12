@@ -7,17 +7,37 @@
   padding: .25rem .75rem;
   background-color: $color5;
   border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
 
-  td:first-child {
-    margin-left: .25rem;
+  table {
+    display: inline-table;
   }
 
-  .results-head {
-    margin-top: 0;
-    text-align: center;
+  td:first-child, th:first-child {
+    padding-right: .25rem;
+  }
+
+  td + td {
+    text-align: right;
   }
 
   td {
     user-select: none;
+  }
+}
+
+.dropdown {
+  display: inline-block;
+  margin-right: .25rem;
+
+  &::before {
+    content: '⯈';
+    display: inline-block;
+    transition: transform .1s; 
+  }
+
+  &.open::before {
+    transform: rotate(90deg);
   }
 }

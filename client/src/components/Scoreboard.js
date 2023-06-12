@@ -25,12 +25,25 @@ export default function Scoreboard() {
 
   return (
     <div className="scoreboard" onClick={toggleOpen}>
-      {over && <p className="results-head">Results</p>}
-      <table>
-        <tbody>
-          {(open || over) ? list : list[0]}
-        </tbody>
-      </table>
+      {!over && <div className={`dropdown${open ? ' open' : ''}`}></div>}
+      {(!open && !over) ? players[currentPlayer] :
+        <table>
+          <thead>
+            <tr>
+              <th colSpan="2">
+                {over ? 'Scores' : 'Turn Order'}
+              </th>
+            </tr>
+            <tr>
+              <th>Player</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list}
+          </tbody>
+        </table>
+      }
     </div>
   );
 };
