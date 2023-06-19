@@ -39,7 +39,7 @@ export default function GameBoard() {
 
       for (const x in placements)
         for (const y in placements[x])
-          pieces.push(<Placement key={`${x},${y}`} x={+x} y={+y} />);
+          pieces.unshift(<Placement key={`${x},${y}`} x={+x} y={+y} />);
       
       return pieces;
     } else {

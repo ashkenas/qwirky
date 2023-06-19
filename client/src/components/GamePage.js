@@ -7,6 +7,7 @@ import { GameDispatchContext } from "../contexts/GameContext";
 import Loading from "./Loading";
 import Scoreboard from "./Scoreboard";
 import TileCounter from "./TileCounter";
+import CenterPopup from "./CenterPopup";
 
 export default function GamePage() {
   const dispatch = useContext(GameDispatchContext)
@@ -14,11 +15,12 @@ export default function GamePage() {
 
   if (!ws) return <Loading message={message}/>;
 
-  return (<>
+  return (<div style={{touchAction: 'none', height: '100%'}}>
     <GameBoard />
     <Controls ws={ws} />
     <Scoreboard />
     <TileCounter />
+    <CenterPopup />
     <Link to="/dash" className="back" />
-  </>);
+  </div>);
 };
