@@ -1,5 +1,6 @@
 import { getGame, makeMove, makeTrade } from "../data/games.js";
-import { StatusError } from "../util.js";
+
+const boardTraversal = [[[[1, 0], [-1, 0]], 'x'], [[[0, 1], [0, -1]], 'y']];
 
 const handler = f => function(data) {
   let parsed;
@@ -93,16 +94,17 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
           throw new Error('Invalid move. Tiles must be in the same line.');
 
     for (const [val, x, y] of data.placed) {
-      for (const [dirs, axis] of [[[[1, 0], [-1, 0]], 'x'], [[[0, 1], [0, -1]], 'y']]) {
+      for (const [dirs, axis] of boardTraversal) {
         let sameA = true, sameB = true;
-        let seen = 1;
+        const seen = new Set();
+        seen.add(val);
         for (const [dirX, dirY] of dirs) {
           let curX = x + dirX, curY = y + dirY;
           let current = game.board[curX]?.[curY];
           while (current) {
-            if (current === val)
+            if (seen.has(current))
               throw new Error('Invalid move. Duplicate tile in row or column.');
-            seen++;
+            seen.add(current);
             sameA &&= (current & 0xF) === (val & 0xF);
             sameB &&= (current & 0xF0) === (val & 0xF0);
             curX += dirX;
@@ -113,8 +115,8 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
         if (!sameA && !sameB)
           throw new Error('Invalid move. Tiles must match in color or symbol.');
 
-        if (seen > 1)
-          scores[axis][axis === 'x' ? y : x] = seen === 6 ? 12 : seen;
+        if (seen.size > 1)
+          scores[axis][axis === 'x' ? y : x] = seen.size === 6 ? 12 : seen.size;
       }
     }
 
