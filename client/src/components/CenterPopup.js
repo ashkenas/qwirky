@@ -24,7 +24,7 @@ export default function CenterPopup() {
   return show ? (
     <div className="center-popup-container" onClick={hide}>
       <div className="popup">
-        <p>{over ? players[winner] : 'Your turn!'}</p>
+        <p>{over ? `${players[winner]} wins!` : 'Your turn!'}</p>
         <button onClick={hide}>Ok</button>
       </div>
     </div>
