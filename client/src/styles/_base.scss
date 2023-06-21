@@ -152,6 +152,10 @@ $back-arrow-offset: math.div($back-arrow-height - $back-arrow-width, 2.828);
     margin: 0 2rem;
     width: calc(100% - 4rem);
 
+    .column {
+      height: auto;
+    }
+
     .column:not(:last-child) {
       margin: 0 0 1rem 0;
       flex: 0;
