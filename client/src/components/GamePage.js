@@ -15,12 +15,13 @@ export default function GamePage() {
 
   if (!ws) return <Loading message={message}/>;
 
-  return (<div style={{touchAction: 'none', height: '100%'}}>
-    <GameBoard />
-    <Controls ws={ws} />
-    <Scoreboard />
-    <TileCounter />
-    <CenterPopup />
-    <Link to="/dash" className="back" />
-  </div>);
+  return (
+    <CenterPopup>
+      <GameBoard />
+      <Controls ws={ws} />
+      <Scoreboard />
+      <TileCounter />
+      <Link to="/dash" className="back" />
+    </CenterPopup>
+  );
 };

@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { GameContext } from "../contexts/GameContext";
 import "../styles/CenterPopup.scss";
 
-export default function CenterPopup() {
+export default function CenterPopup({ children }) {
   const { yourTurn, over, scores, players } = useContext(GameContext);
   const [show, setShow] = useState(yourTurn);
 
@@ -21,12 +21,14 @@ export default function CenterPopup() {
     }, [0, 0])[1];
   }, [over, scores]);
 
-  return show ? (
-    <div className="center-popup-container" onClick={hide}>
-      <div className="popup">
-        <p>{over ? `${players[winner]} wins!` : 'Your turn!'}</p>
-        <button onClick={hide}>Ok</button>
-      </div>
+  return (
+    <div className="center-popup-container" onMouseDownCapture={hide} onTouchStartCapture={hide}>
+      {children}
+      {show && (
+        <div className="popup">
+          <p>{over ? `${players[winner]} wins!` : 'Your turn!'}</p>
+        </div>
+      )}
     </div>
-  ) : (<></>);
+  );
 };
