@@ -17,6 +17,6 @@ export default function Gamepiece({ value, x, y, highlight, placing, selected, r
 
   return (
     <div className={classes.join(' ')} onClick={onClick}
-      style={racked ? {} : { top: `${-y}00%`, left: `${x}00%` }}></div>
+      style={racked ? {} : { top: `${-y*100}%`, left: `${x*100}%` }}></div>
   );
 };

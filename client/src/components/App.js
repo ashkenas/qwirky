@@ -9,6 +9,7 @@ import NewGame from './NewGame';
 import { DataProvider } from '../contexts/DataContext';
 import GamePage from './GamePage';
 import { GameProvider } from '../contexts/GameContext';
+import Instructions from './Instructions';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       </Protect>
     ),
     path: '/friends'
+  },
+  {
+    element: <Instructions />,
+    path: '/how-to'
   },
   {
     element: (

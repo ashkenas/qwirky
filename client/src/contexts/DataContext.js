@@ -4,8 +4,11 @@ export const DataContext = createContext(null);
 
 export const DataDispatchContext = createContext(null);
 
+let stored = localStorage.getItem('dataStore');
+stored = stored ? JSON.parse(stored) : new Map();
+
 export function DataProvider({ children }) {
-  const [state, dispatch] = useReducer(dataReducer, new Map());
+  const [state, dispatch] = useReducer(dataReducer, stored);
 
   return (
     <DataDispatchContext.Provider value={dispatch}>
@@ -19,5 +22,6 @@ export function DataProvider({ children }) {
 export const dataReducer = (state, action) => {
   const newState = new Map(state);
   newState.set(action.url, action.payload);
+  localStorage.setItem('dataStore', JSON.stringify(newState));
   return newState; 
 };

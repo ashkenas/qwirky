@@ -1,0 +1,10 @@
+.demo-board {
+  position: relative;
+
+  .center-piece {
+    position: relative;
+    width: 5rem;
+    height: 5rem;
+    // transform: scale(.5);
+  }
+}
