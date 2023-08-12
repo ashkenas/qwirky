@@ -131,7 +131,32 @@ export const makeMove = async (id, placed, score) => {
   game.scores[game.currentPlayer] += score;
   
   const over = game.hands[game.currentPlayer].length === 0;
-  if (over) game.scores[game.currentPlayer] += 6;
+  let winners = [];
+  if (over) {
+    game.scores[game.currentPlayer] += 6;
+
+    let tiedPlayers = [0];
+    let maxScore = game.scores[0];
+    for (let i = 1; i < game.scores.length; i++) {
+      if (game.scores[i] > maxScore) {
+        tiedPlayers = [i];
+        maxScore = game.scores[i];
+      } else if (game.scores[i] === maxScore) {
+        tiedPlayers.push(i);
+      }
+    }
+    winners = [tiedPlayers[0]];
+    let minHandSize = game.hands[tiedPlayers[0]].length;
+    for (let i = 1; i < tiedPlayers.length; i++) {
+      const j = tiedPlayers[i];
+      if (game.hands[j].length < minHandSize) {
+        winners = [j];
+        minHandSize = game.hands[j].length;
+      } else if (game.hands[j].length === minHandSize) {
+        winners.push(j);
+      }
+    }
+  };
   
   const col = await games();
   const res = await col.updateOne(
@@ -143,7 +168,7 @@ export const makeMove = async (id, placed, score) => {
         pieces: game.pieces,
         hands: game.hands,
         scores: game.scores,
-        over: over
+        over: over && winners
       }
     }
   );

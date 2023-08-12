@@ -29,7 +29,7 @@ export function useWebSocket(dispatch) {
     let ignore = false;
     const attempt = (retry) => {
       auth.currentUser?.getIdToken().then(async token => {
-        ws = new WebSocket(`ws://${host}${pathname}`, token);
+        ws = new WebSocket(`wss://${host}${pathname}`, token);
         ws.addEventListener('open', () => {
           retry = false;
           retryIn = 1;

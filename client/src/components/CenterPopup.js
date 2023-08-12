@@ -15,10 +15,7 @@ export default function CenterPopup({ children }) {
   const winner = useMemo(() => {
     if (!over) return null;
 
-    return scores.reduce(([p, i], c, ci) => {
-      if (p >= c) return [p, i];
-      return [c, ci];
-    }, [0, 0])[1];
+    return over.map(i => players[i]).join(' & ');
   }, [over, scores]);
 
   return (
@@ -26,7 +23,7 @@ export default function CenterPopup({ children }) {
       {children}
       {show && (
         <div className="popup">
-          <p>{over ? `${players[winner]} wins!` : 'Your turn!'}</p>
+          <p>{over ? `${winner} win${over.length === 1 ? 's' : ''}!` : 'Your turn!'}</p>
         </div>
       )}
     </div>
