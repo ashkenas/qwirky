@@ -8,11 +8,13 @@ import Loading from "./Loading";
 import Scoreboard from "./Scoreboard";
 import TileCounter from "./TileCounter";
 import CenterPopup from "./CenterPopup";
+import ErrorPage from "./ErrorPage";
 
 export default function GamePage() {
   const dispatch = useContext(GameDispatchContext)
-  const [ws, message] = useWebSocket(dispatch);
+  const [ws, message, code] = useWebSocket(dispatch);
 
+  if (code) return <ErrorPage message={message} status={code} />
   if (!ws) return <Loading message={message}/>;
 
   return (

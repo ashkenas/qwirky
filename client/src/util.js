@@ -21,6 +21,7 @@ export function useWebSocket(dispatch) {
   const user = useContext(AuthContext);
   const [ws, setWS] = useState(null);
   const [message, setMessage] = useState('Connecting...');
+  const [code, setCode] = useState(0);
 
   useEffect(() => {
     const { host, pathname } = window.location;
@@ -36,7 +37,13 @@ export function useWebSocket(dispatch) {
           setWS(ws);
         });
         ws.addEventListener('message', ({ data }) => {
-          dispatch(JSON.parse(data));
+          const action = JSON.parse(data);
+          if (action.type === 'connectionError') {
+            ignore = true;
+            ws.close();
+            setCode(action.code);
+            setMessage(action.error);
+          } else dispatch(action);
         });
         ws.addEventListener('close', () => {
           if (ignore) return;
@@ -52,10 +59,11 @@ export function useWebSocket(dispatch) {
       ignore = true;
       ws.close();
       setWS(null);
+      setCode(0);
     };
-  }, [user, dispatch, setWS, setMessage]);
+  }, [user, dispatch, setWS, setMessage, setCode]);
 
-  return [ws, message];
+  return [ws, message, code];
 }
 
 export function useData(url, options = {}) {
@@ -63,26 +71,21 @@ export function useData(url, options = {}) {
   const user = useContext(AuthContext);
   const [i, setI] = useState(0);
   const refetch = useCallback(() => setI(i + 1), [i, setI]);
-  const [state, setState] = useStoredData(url, {
-    data: null,
-    error: false,
-    loading: true
-  });
+  const [data, setData] = useStoredData(url, null);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return setState({
-      data: state.data,
-      error: <ErrorPage status={401}
-        message={"You must be logged in to view this page."} />,
-      loading: false
-    });
+    if (!user) {
+      setError(<ErrorPage status={401}
+        message={"You must be logged in to view this page."} />);
+      setLoading(false);
+      return;
+    }
     let abort = false;
     auth.currentUser?.getIdToken().then(async token => {
-      setState({
-        data: state.data,
-        error: false,
-        loading: true
-      });
+      setError(false);
+      setLoading(true);
       const res = await fetch(url, {
         headers: {
           'Authorization': token
@@ -90,12 +93,9 @@ export function useData(url, options = {}) {
       });
       if (abort) return;
       if (!res.ok) {
-        setState({
-          data: state.data,
-          error: (<ErrorPage status={500}
-            message={"An error occured. Please try again later."} />),
-          loading: false
-        });
+        setError(<ErrorPage status={500}
+          message={"An error occured. Please try again later."} />);
+        setLoading(false);
         let error = await res.text();
         try {
           error = JSON.parse(error).error;
@@ -104,18 +104,21 @@ export function useData(url, options = {}) {
         return;
       }
       const data = await res.json();
-      setState({
-        data: data,
-        error: false,
-        loading: false
-      });
+      setData(data);
+      setError(false);
+      setLoading(false);
       if (onComplete) onComplete(data);
     });
     return () => abort = true;
   // eslint-disable-next-line
-  }, [url, user, setState, i]);
+  }, [url, user, setData, setError, setLoading, i]);
 
-  return { ...state, refetch: refetch };
+  return {
+    data: data,
+    error: error,
+    loading: loading,
+    refetch: refetch
+  };
 };
 
 export function useAction(url, options = {}) {

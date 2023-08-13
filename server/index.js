@@ -7,6 +7,7 @@ import { getAuth } from "firebase-admin/auth";
 import { WebSocketServer } from "ws";
 import * as users from "./data/users.js";
 import * as websockets from "./routes/websockets.js";
+import { logError } from "./data/errors.js";
 
 const firebaseApp = initializeApp({
   credential: applicationDefault()
@@ -42,6 +43,7 @@ app.use((err, _req, res, _next) => {
   const message = err.message || 'Internal Server Error';
   if (status === 500) console.error(err);
   res.status(status).json({ error: message });
+  logError(err, 'Express Error Handler');
 });
 
 const server = app.listen(process.env.PORT || 4000, () =>
@@ -49,62 +51,69 @@ const server = app.listen(process.env.PORT || 4000, () =>
 );
 
 const wss = new WebSocketServer({ noServer: true });
+const connectionError = (code, error) => {
+  return JSON.stringify({
+    type: 'connectionError',
+    error: error,
+    code: code
+  });
+};
 
 // WebSocket hell
-server.on('upgrade', async (req, socket, head) => {
-  const token = req.headers['sec-websocket-protocol'];
-  let uid;
+server.on('upgrade', (req, socket, head) => {
+  wss.handleUpgrade(req, socket, head, async ws => {
+    const token = req.headers['sec-websocket-protocol'];
+    let uid;
 
-  if (token) {
-    try {
-      const { uid: uidResult } = await getAuth(firebaseApp).verifyIdToken(token, true);
-      if (!uidResult) {
-        socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
-        socket.destroy();
+    if (token) {
+      try {
+        const { uid: uidResult } = await getAuth(firebaseApp).verifyIdToken(token, true);
+        if (!uidResult) {
+          logError('Failed to decode UID.', 'Websocket Authorization');
+          ws.send(connectionError(500, 'Internal Server Error'));
+          ws.terminate();
+          return;
+        }
+        uid = uidResult;
+      } catch (e) {
+        logError(e, 'Token Verification');
+        ws.send(connectionError(401, 'Unauthenticated'));
+        ws.terminate();
         return;
       }
-      uid = uidResult;
-    } catch (e) {
-      console.error(e);
-      socket.write('HTTP/1.1 401 Unauthenticated\r\n\r\n');
-      socket.destroy();
-      return;
-    }
-  } else {
-    socket.write('HTTP/1.1 401 Unauthenticated\r\n\r\n');
-    socket.destroy();
-    return;
-  }
-
-  // At this point we are authenticated. Authorize.
-  const match = (/^\/game\/([0-9a-f]{24})\/?$/i).exec(req.url);
-  if (!match) {
-    socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-    socket.destroy();
-    return;
-  }
-
-  const gameId = match[1];
-  try {
-    const user = await users.getUserByUid(uid);
-    if (!user.games.find(g => g.equals(gameId))) {
-      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-      socket.destroy();
+    } else {
+      ws.send(connectionError(401, 'Unauthenticated'));
+      ws.terminate();
       return;
     }
 
-    // We are authorized by process of elimination, proceed
-    wss.handleUpgrade(req, socket, head, ws => {
+    // At this point we are authenticated. Authorize.
+    const match = (/^\/game\/([0-9a-f]{24})\/?$/i).exec(req.url);
+    if (!match) {
+      ws.send(connectionError(404, 'Not Found'));
+      ws.terminate();
+      return;
+    }
+    const gameId = req.game = match[1];
+
+    try {
+      const user = await users.getUserByUid(uid);
+      if (!user.games.find(g => g.equals(gameId))) {
+        ws.send(connectionError(404, 'Not Found'));
+        ws.terminate();
+        return;
+      }
       ws.id = user._id;
-      req.game = gameId;
+
+      // We are authorized by process of elimination, proceed
       wss.emit('connection', ws, req);
-    });
-  } catch (e) {
-    console.error(e);
-    socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
-    socket.destroy();
-    return;
-  }
+    } catch (e) {
+      logError(e, 'Websocket User Identification');
+      ws.send(connectionError(500, 'Internal Server Error'));
+      ws.terminate();
+      return;
+    }
+  });
 });
 
 wss.on('connection', (ws, req) => {
@@ -142,4 +151,4 @@ const cleanupInterval = setInterval(() => {
   })
 }, 30000);
 
-wss.on('clone', () => clearInterval(cleanupInterval));
+wss.on('close', () => clearInterval(cleanupInterval));

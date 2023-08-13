@@ -15,3 +15,4 @@ const memoCollection = (collection) => {
 
 export const users = memoCollection('users');
 export const games = memoCollection('games');
+export const errors = memoCollection('errors');

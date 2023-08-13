@@ -91,6 +91,7 @@ export const getGame = async (id, withUsernames) => {
   const col = await games();
   const usersCol = await users();
   const game = await col.findOne({ _id: id });
+  if (!game) return null;
   
   if (withUsernames) {
     const usernames = (await usersCol.aggregate([
