@@ -44,7 +44,7 @@ export default function Dashboard() {
     <div className="columns">
       <div className="column">
         <h1 className="has-input">
-          Hello,
+          Hello,&nbsp;
           {!editing && name}
           {editing && <input type="text" value={name} onChange={onNameChange} onBlur={onNameChange} />}
         </h1>
