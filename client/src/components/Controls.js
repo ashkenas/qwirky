@@ -50,14 +50,14 @@ export default function Controls({ ws }) {
       <div className="buttons">
         {yourTurn && tilesLeft > 0 && placed.length === 0 && !trading &&
           <button className="trade" onClick={doStartTrade}>
-            Start Trade
+            Trade With Bag
           </button>
         }
         {trading && (<>
           <button className="btn-1" onClick={doCancelTrade}>
             Cancel
           </button>
-          <button className="btn-2" onClick={doTrade}>Trade</button>
+          <button className="btn-2" onClick={doTrade}>Confirm</button>
         </>)}
         {placed.length > 0 && (<>
           <button className="btn-1" onClick={() => dispatch(pickup())}>

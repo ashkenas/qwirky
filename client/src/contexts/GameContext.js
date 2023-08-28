@@ -90,7 +90,7 @@ export const gameReducer = (state, action) => {
       newState.hand = action.hand;
 
     if (action.score)
-      newState.scores[state.currentPlayer] += action.score;
+      newState.scores[state.currentPlayer] = action.score;
 
     for (const [val, x, y] of action.placed) {
       if (!newState.board[x]) newState.board[x] = {};

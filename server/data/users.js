@@ -45,7 +45,7 @@ export const changeUsername = async (uid, username) => {
   const test = await col.findOne({
     username: username
   });
-  if (test) throw new Error(400, 'Username taken already.');
+  if (test) throw new StatusError(400, 'Username taken already.');
   const res = await col.updateOne(
     { _id: user._id },
     { $set: { username: username } }

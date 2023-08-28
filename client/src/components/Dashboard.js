@@ -61,7 +61,7 @@ export default function Dashboard() {
       <div className="column">
         <h1>On-going Games</h1>
         <div className="column-body">
-          {data.games.map(game => (
+          {data && data.games && data.games.map(game => (
             <Link key={game._id} className="game-card" to={`/game/${game._id}`}>
               <p className="game-name">{game.name}</p>
               <p className="game-players">
