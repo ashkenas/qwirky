@@ -4,10 +4,10 @@ import { generateName } from "./names.js";
 import { getUserByUid } from "./users.js";
 
 const fullPieceSet = [];
-for (let k = 0; k < 3; k++)
-  for (let i = 1; i <= 6; i++)
-    for (let j = 0x10; j <= 0x60; j += 0x10)
-      fullPieceSet.push(i | j);
+for (let i = 1; i <= 6; i++)
+  for (let j = 0x10; j <= 0x60; j += 0x10)
+    for (let k = 0; k < 0x300; k += 0x100)
+      fullPieceSet.push(i | j | k);
 
 // Durstenfeld's Fisher-Yates Shuffle
 const shuffle = array => {
@@ -33,7 +33,7 @@ export const createGame = async players => {
   const hands = players.map(() => pieces.splice(0, 6));
   const firstPlayer = hands.reduce(([oldMaxRank, maxI], hand, i) => {
     const dedupe = hand.reduce((newHand, tile) => {
-      if (!newHand.includes(tile)) newHand.push(tile);
+      if (!newHand.includes(tile & 0xFF)) newHand.push(tile & 0xFF);
       return newHand;
     }, []);
     let maxRank = 0;
@@ -56,6 +56,7 @@ export const createGame = async players => {
     hands: hands,
     currentPlayer: firstPlayer,
     scores: players.map(() => 0),
+    lastMove: [],
     over: false
   });
 
@@ -122,6 +123,8 @@ export const makeMove = async (id, placed, score) => {
 
   const hand = [...game.hands[game.currentPlayer]];
   for (const [val, x, y] of placed) {
+    if (!hand.includes(val))
+      throw new Error('Can\'t place pieces that aren\'t in your hand.');
     hand.splice(hand.indexOf(val), 1);
     if (!game.board[x])
       game.board[x] = {};
@@ -169,6 +172,7 @@ export const makeMove = async (id, placed, score) => {
         pieces: game.pieces,
         hands: game.hands,
         scores: game.scores,
+        lastMove: placed.map(([val]) => val),
         over: over && winners
       }
     }
@@ -201,7 +205,8 @@ export const makeTrade = async (id, pieces) => {
         board: game.board,
         currentPlayer: (game.currentPlayer + 1) % game.players.length,
         pieces: shuffle(game.pieces.concat(recycle)),
-        hands: game.hands
+        hands: game.hands,
+        lastMove: []
       }
     }
   );

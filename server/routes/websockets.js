@@ -197,6 +197,7 @@ export async function gameInitialize(ws, gameId, senderId) {
     yourTurn: idx === game.currentPlayer,
     scores: game.scores,
     tilesLeft: game.pieces.length,
+    lastMove: game.lastMove,
     over: game.over
   }));
 };

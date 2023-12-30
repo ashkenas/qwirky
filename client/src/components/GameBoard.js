@@ -26,7 +26,7 @@ export default function GameBoard() {
         for (let y in board[x]) {
           y = +y;
           const placing = placed.some(([, px, py]) => x === px && y === py);
-          const highlight = lastMove.some(([, px, py]) => x === px && y === py);
+          const highlight = lastMove.includes(board[x][y]);
           pieces.push(<Gamepiece key={`${x},${y}`} x={x} y={y}
             value={board[x][y]} highlight={highlight} placing={placing} />);
 

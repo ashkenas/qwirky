@@ -56,7 +56,7 @@ export const gameReducer = (state, action) => {
       hand: action.hand,
       selected: 0,
       placed: [],
-      lastMove: [],
+      lastMove: action.lastMove,
       justMoved: false,
       trading: false,
       toTrade: [],
@@ -70,7 +70,7 @@ export const gameReducer = (state, action) => {
     const newState = {
       ...state,
       yourTurn: action.yourTurn,
-      lastMove: action.placed,
+      lastMove: action.placed.map(([val]) => val),
       placed: [],
       justMoved: false,
       trading: false,
