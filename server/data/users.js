@@ -101,6 +101,8 @@ export const makeFriendRequest = async (uid, username) => {
   const user = await getUserByUid(uid);
   if (user._id.equals(friend._id))
     throw new StatusError(400, 'You cannot friend yourself.');
+  if (friend.requests.some(rid => rid.equals(user._id)))
+    throw new StatusError(400, 'You\'ve already sent that user a friend request.');
   const col = await users();
   if (user.requests.some(fid => fid.equals(friend._id)))
     return await acceptFriendRequest(uid, friend._id);
@@ -124,7 +126,7 @@ export const acceptFriendRequest = async (uid, id) => {
       { _id: user._id },
       { $pull: { requests: id } }
     );
-    throw new StatusError(400, 'User does not exist.');
+    throw new StatusError(400, 'User does not exist anymore.');
   }
   const res1 = await col.updateOne(
     { _id: user._id },
