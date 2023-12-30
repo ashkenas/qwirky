@@ -24,13 +24,16 @@ export function useWebSocket(dispatch) {
   const [code, setCode] = useState(0);
 
   useEffect(() => {
-    const { host, pathname } = window.location;
+    const { hostname, host, pathname } = window.location;
     let ws;
     let retryIn = 1;
     let ignore = false;
     const attempt = (retry) => {
       auth.currentUser?.getIdToken().then(async token => {
-        ws = new WebSocket(`wss://${host}${pathname}`, token);
+        if (process.env.NODE_ENV === 'production')
+          ws = new WebSocket(`wss://${host + pathname}`, token);
+        else
+          ws = new WebSocket(`ws://${hostname}:4000${pathname}`, token);
         ws.addEventListener('open', () => {
           retry = false;
           retryIn = 1;
