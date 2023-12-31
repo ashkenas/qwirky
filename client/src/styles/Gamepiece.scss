@@ -85,10 +85,6 @@ div.piece.highlight {
   }
 }
 
-div.piece.selected {
-  transform: translateY(-.5em);
-}
-
 div.piece::after, div.piece::before {
   content: '';
   position: absolute;

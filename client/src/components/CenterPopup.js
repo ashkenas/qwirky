@@ -3,7 +3,7 @@ import { GameContext } from "../contexts/GameContext";
 import "../styles/CenterPopup.scss";
 
 export default function CenterPopup({ children }) {
-  const { yourTurn, over, scores, players } = useContext(GameContext);
+  const { yourTurn, over, players } = useContext(GameContext);
   const [show, setShow] = useState(yourTurn);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function CenterPopup({ children }) {
     if (!over) return null;
 
     return over.map(i => players[i]).join(' & ');
-  }, [over, scores]);
+  }, [over, players]);
 
   return (
     <div className="center-popup-container" onMouseDownCapture={hide} onTouchStartCapture={hide}>

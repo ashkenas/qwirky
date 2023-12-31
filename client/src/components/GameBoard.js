@@ -8,7 +8,7 @@ const distSq = (t1, t2) =>
   ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);
 
 export default function GameBoard() {
-  const { board, placed, lastMove } = useContext(GameContext);
+  const { board, placed, lastMove, dragDisabled } = useContext(GameContext);
   const centerRef = useRef(null);
   const boardRef = useRef(null);
   const coords = useRef([0, 0, 1]);
@@ -48,6 +48,7 @@ export default function GameBoard() {
   }, [board, placed, lastMove]);
 
   const move = useCallback((e) => {
+    if (dragDisabled) return;
     if (e.nativeEvent instanceof MouseEvent && e.buttons !== 1) return;
     setMoving(true);
     const scale = coords.current[2];
@@ -55,7 +56,7 @@ export default function GameBoard() {
     const y = coords.current[1] += e.movementY / scale;
     centerRef.current.style.setProperty('--offset-x', `${x}px`);
     centerRef.current.style.setProperty('--offset-y', `${y}px`);
-  }, [setMoving]);
+  }, [setMoving, dragDisabled]);
 
   const doneMoving = useCallback((e) => {
     if (!moving) return;

@@ -1,24 +1,5 @@
 import { createContext, useReducer } from "react";
 
-export const GameContext = createContext({
-  board: null,
-  yourTurn: false,
-  selected: 0,
-  hand: [],
-  placed: [],
-  lastMove: [],
-  justMoved: false,
-  trading: false,
-  toTrade: [],
-  players: [],
-  currentPlayer: -1,
-  scores: [],
-  tilesLeft: 0,
-  over: false
-});
-
-export const GameDispatchContext = createContext(null);
-
 const initialState = {
   board: null,
   yourTurn: false,
@@ -33,8 +14,14 @@ const initialState = {
   currentPlayer: -1,
   scores: [],
   tilesLeft: 0,
-  over: false
+  over: false,
+  dragDisabled: false
 };
+
+export const GameContext = createContext({ ...initialState });
+
+export const GameDispatchContext = createContext(null);
+
 
 export function GameProvider({ children }) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
@@ -107,7 +94,7 @@ export const gameReducer = (state, action) => {
 
     const newState = {
       ...state,
-      board: state.board || {},
+      board: state.board ? JSON.parse(JSON.stringify(state.board)) : {},
       selected: Math.min(state.hand.length - 2, state.selected),
       hand: [...state.hand],
       placed: [...state.placed, [val, x, y]]
@@ -208,6 +195,10 @@ export const gameReducer = (state, action) => {
     if (state.justMoved)
       return gameReducer({ ...state, yourTurn: true }, pickup());
     else return { ...state };
+  } else if (action.type === 'acquireDrag') {
+    return { ...state, dragDisabled: true };
+  } else if (action.type === 'releaseDrag') {
+    return { ...state, dragDisabled: false };
   }
   console.error(`Invalid action '${action && action.type}'.`);
   return { ...state };
@@ -238,4 +229,12 @@ export const startTrade = () => ({
 
 export const cancelTrade = () => ({
   type: 'cancelTrade'
+});
+
+export const acquireDrag = () => ({
+  type: 'acquireDrag'
+});
+
+export const releaseDrag = () => ({
+  type: 'releaseDrag'
 });

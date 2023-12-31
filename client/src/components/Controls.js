@@ -40,10 +40,10 @@ export default function Controls({ ws }) {
   }, [ws, toTrade, hand, dispatch]);
 
   return (
-    <div class="controls">
+    <div className="controls">
       <div className="rack">
         {hand.map((val, x) =>
-          <Gamepiece key={x} value={val} x={x} selected={x === selected}
+          <Gamepiece key={val} value={val} x={x} selected={x === selected}
             racked highlight={trading && toTrade.includes(x)} />
         )}
       </div>

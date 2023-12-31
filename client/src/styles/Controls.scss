@@ -16,10 +16,14 @@
     .piece {
       position: relative;
       display: inline-block;
-      transition: .25s transform;
 
       &:not(:last-child) {
         margin-right: .2em;
+      }
+
+      &.dragging {
+        touch-action: none;
+        pointer-events: none;
       }
     }
   }
