@@ -57,6 +57,7 @@ export const createGame = async players => {
     currentPlayer: firstPlayer,
     scores: players.map(() => 0),
     lastMove: [],
+    latestMoveTime: Date.now(),
     over: false
   });
 
@@ -76,14 +77,37 @@ export const createGame = async players => {
 
 export const getGames = async uid => {
   const user = await getUserByUid(uid);
-  // const col = await games();
-  // const gamesResults = await col.aggregate([
-  //   { $match: { _id: { $in: user.games } } },
-  //   { $project: { name: 1, usernames: 1, currentPlayer: 1 } }
-  // ]).toArray();
-  const gamesResults = [];
-  for (const game of user.games)
-    gamesResults.push(await getGame(game, true));
+  const col = await games();
+  const gamesResults = await col.aggregate([
+    { $match: { _id: { $in: user.games } } },
+    { $unwind: '$players' },
+    {
+      $lookup: {
+        from: 'users', 
+        localField: 'players', 
+        foreignField: '_id', 
+        as: 'usernames'
+      }
+    },
+    {
+      $group: {
+        _id: {
+          _id: '$_id',
+          name: '$name',
+          latestMoveTime: '$latestMoveTime',
+          currentPlayer: '$currentPlayer'
+        },
+        usernames: {
+          $push: {
+            $first: '$usernames.username'
+          }
+        }
+      }
+    },
+    { $addFields: { '_id.usernames': '$usernames' } },
+    { $replaceRoot: { newRoot: '$_id' } },
+    { $sort: { latestMoveTime: -1 } }
+  ]).toArray();
   return gamesResults;
 };
 
@@ -173,7 +197,8 @@ export const makeMove = async (id, placed, score) => {
         hands: game.hands,
         scores: game.scores,
         lastMove: placed.map(([val]) => val),
-        over: over && winners
+        latestMoveTime: Date.now(),
+        over: over && winners,
       }
     }
   );
@@ -206,7 +231,8 @@ export const makeTrade = async (id, pieces) => {
         currentPlayer: (game.currentPlayer + 1) % game.players.length,
         pieces: shuffle(game.pieces.concat(recycle)),
         hands: game.hands,
-        lastMove: []
+        lastMove: [],
+        latestMoveTime: Date.now()
       }
     }
   );
