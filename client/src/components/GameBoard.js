@@ -1,14 +1,17 @@
-import { useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { GameContext } from "../contexts/GameContext";
 import Gamepiece from "./Gamepiece";
 import Placement from "./Placement";
 import "../styles/Gameboard.scss";
 
-const pageDist = (a, b) => Math.hypot(a.pageX - b.pageX, a.pageY - b.pageY);
+const pageDist = (a, b) => Math.hypot(a.pageX - b.pageX, a.pageY - b.pageY) ** 2;
+const avg = (vals) => vals.reduce((a, b) => a + b) / vals.length;
 
 export default function GameBoard() {
   const { board, placed, lastMove, dragDisabled, coords } = useContext(GameContext);
   const centerRef = useRef(null);
+  // React doesn't support active listeners
+  const boardRef = useRef(null);
   const [moving, setMoving] = useState(false);
 
   const pieces = useMemo(() => {
@@ -61,7 +64,8 @@ export default function GameBoard() {
     setMoving(false);
   }, [moving, setMoving]);
 
-  const onWheel = useCallback((e) => {
+  const wheelListener = useCallback((e) => {
+    e.preventDefault();
     const { clientX, clientY, deltaY } = e;
     const scaleBy = deltaY < 0 ? 1.1 : 0.909090909;
     const newScale = coords.current[2] * scaleBy; 
@@ -79,18 +83,18 @@ export default function GameBoard() {
 
   const lastTouches = useRef(null);
   const touchMoveListener = useCallback((e) => {
+    e.preventDefault();
     if (lastTouches.current && lastTouches.current.length === e.touches.length) {
-      e.preventDefault();
-      if (e.touches.length === 1) {
-        e.movementX = e.touches[0].pageX - lastTouches.current[0].pageX;
-        e.movementY = e.touches[0].pageY - lastTouches.current[0].pageY;
-        move(e);
-      } else if (e.touches.length === 2) {
+      e.movementX = avg([...e.touches].map(t => t.clientX)) - avg([...lastTouches.current].map(t => t.clientX));
+      e.movementY = avg([...e.touches].map(t => t.clientY)) - avg([...lastTouches.current].map(t => t.clientY));
+      move(e);
+      if (e.touches.length >= 2) {
         const r = Math.sqrt(pageDist(...e.touches) / pageDist(...lastTouches.current));
         const newScale = coords.current[2] * r;
+        lastTouches.current = e.touches;
         if (newScale < .2 || newScale > 5) return;
-        const centerX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
-        const centerY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
+        const centerX = avg([e.touches[0].clientX, e.touches[1].clientX]);
+        const centerY = avg([e.touches[0].clientY, e.touches[1].clientY]);
         const { x, y, width, height } = centerRef.current.getBoundingClientRect();
         coords.current[0] = (((x + (width / 2) - centerX) * r)
           + centerX - (window.innerWidth / 2)) / newScale;
@@ -109,13 +113,24 @@ export default function GameBoard() {
     lastTouches.current = null;
   }, [setMoving]);
 
+  useEffect(() => {
+    const opts = { passive: false };
+    const boardElement = boardRef.current;
+    boardElement?.addEventListener('touchmove', touchMoveListener, opts);
+    boardElement?.addEventListener('touchend', touchEndListener, opts);
+    boardElement?.addEventListener('wheel', wheelListener, opts);
+    return () => {
+      boardElement?.removeEventListener('touchmove', touchMoveListener);
+      boardElement?.removeEventListener('touchend', touchEndListener);
+      boardElement?.removeEventListener('wheel', wheelListener);
+    }
+  }, [touchMoveListener, touchEndListener, wheelListener]);
+
   return (
-    <div className="game-board"
-      onTouchMove={touchMoveListener}
-      onTouchEnd={touchEndListener}
+    <div ref={boardRef}
+      className="game-board"
       onMouseMove={move}
-      onClickCapture={doneMoving}
-      onWheel={onWheel}>
+      onClickCapture={doneMoving}>
       <div className="center-piece" ref={centerRef}>
         {pieces}
       </div>

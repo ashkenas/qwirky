@@ -13,8 +13,8 @@
     position: absolute;
     width: 5rem;
     height: 5rem;
-    top: calc(calc(50vh - 2.5rem));
-    left: calc(calc(50vw - 2.5rem));
+    top: calc(calc(calc(var(--vh) * 50) - 2.5rem));
+    left: calc(calc(calc(var(--vw) * 50) - 2.5rem));
     transform-origin: calc(50% - var(--offset-x)) calc(50% - var(--offset-y));
     transform: translate(var(--offset-x), var(--offset-y)) scale(var(--scale));
   }

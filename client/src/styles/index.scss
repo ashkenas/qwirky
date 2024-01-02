@@ -1,5 +1,10 @@
 @import "_base";
 
+html {
+  --vh: 1vh;
+  --vw: 1vw;
+}
+
 html, body {
   margin: 0;
   padding: 0;
