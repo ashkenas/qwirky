@@ -97,10 +97,10 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       for (const [dirs, axis] of boardTraversal) {
         let sameA = true, sameB = true;
         const seen = new Set();
-        seen.add(val);
+        seen.add(val & 0xFF);
         for (const [dirX, dirY] of dirs) {
           let curX = x + dirX, curY = y + dirY;
-          let current = game.board[curX]?.[curY];
+          let current = game.board[curX]?.[curY] & 0xFF;
           while (current) {
             if (seen.has(current))
               throw new Error('Invalid move. Duplicate tile in row or column.');
@@ -109,7 +109,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
             sameB &&= (current & 0xF0) === (val & 0xF0);
             curX += dirX;
             curY += dirY;
-            current = game.board[curX]?.[curY];
+            current = game.board[curX]?.[curY] & 0xFF;
           }
         }
         if (!sameA && !sameB)

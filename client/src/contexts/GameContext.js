@@ -127,10 +127,10 @@ export const gameReducer = (state, action) => {
     for (const dirs of [[[1, 0], [-1, 0]], [[0, 1], [0, -1]]]) {
       let sameA = true, sameB = true;
       const seen = new Set();
-      seen.add(val);
+      seen.add(val & 0xFF);
       for (const [dirX, dirY] of dirs) {
         let curX = x + dirX, curY = y + dirY;
-        let current = newState.board[curX]?.[curY];
+        let current = newState.board[curX]?.[curY] & 0xFF;
         while (current) {
           if (seen.has(current)) return { ...state };
           seen.add(current);
@@ -138,7 +138,7 @@ export const gameReducer = (state, action) => {
           sameB &&= (current & 0xF0) === (val & 0xF0);
           curX += dirX;
           curY += dirY;
-          current = newState.board[curX]?.[curY];
+          current = newState.board[curX]?.[curY] & 0xFF;
         }
       }
       if (!sameA && !sameB) return { ...state };
