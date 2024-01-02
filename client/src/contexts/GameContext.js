@@ -15,7 +15,8 @@ const initialState = {
   scores: [],
   tilesLeft: 0,
   over: false,
-  dragDisabled: false
+  dragDisabled: { current: false },
+  coords: { current: [0, 0, 1] }
 };
 
 export const GameContext = createContext({ ...initialState });
@@ -51,7 +52,9 @@ export const gameReducer = (state, action) => {
       currentPlayer: action.currentPlayer,
       scores: action.scores,
       tilesLeft: action.tilesLeft,
-      over: action.over
+      over: action.over,
+      dragDisabled: { current: false },
+      coords: { current: [0, 0, 1] }
     };
   } else if (action.type === 'move') {
     const newState = {
