@@ -198,10 +198,6 @@ export const gameReducer = (state, action) => {
     if (state.justMoved)
       return gameReducer({ ...state, yourTurn: true }, pickup());
     else return { ...state };
-  } else if (action.type === 'acquireDrag') {
-    return { ...state, dragDisabled: true };
-  } else if (action.type === 'releaseDrag') {
-    return { ...state, dragDisabled: false };
   }
   console.error(`Invalid action '${action && action.type}'.`);
   return { ...state };
@@ -232,12 +228,4 @@ export const startTrade = () => ({
 
 export const cancelTrade = () => ({
   type: 'cancelTrade'
-});
-
-export const acquireDrag = () => ({
-  type: 'acquireDrag'
-});
-
-export const releaseDrag = () => ({
-  type: 'releaseDrag'
 });

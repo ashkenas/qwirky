@@ -1,16 +1,14 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useMemo, useRef, useState } from "react";
 import { GameContext } from "../contexts/GameContext";
 import Gamepiece from "./Gamepiece";
 import Placement from "./Placement";
 import "../styles/Gameboard.scss";
 
-const distSq = (t1, t2) =>
-  ((t1.pageX - t2.pageX) ** 2) + ((t1.pageY - t2.pageY) ** 2);
+const pageDist = (a, b) => Math.hypot(a.pageX - b.pageX, a.pageY - b.pageY);
 
 export default function GameBoard() {
   const { board, placed, lastMove, dragDisabled, coords } = useContext(GameContext);
   const centerRef = useRef(null);
-  const boardRef = useRef(null);
   const [moving, setMoving] = useState(false);
 
   const pieces = useMemo(() => {
@@ -64,48 +62,60 @@ export default function GameBoard() {
   }, [moving, setMoving]);
 
   const onWheel = useCallback((e) => {
-    const newScale = coords.current[2] * (e.deltaY < 0 ? 1.1 : .91); 
+    const { clientX, clientY, deltaY } = e;
+    const scaleBy = deltaY < 0 ? 1.1 : 0.909090909;
+    const newScale = coords.current[2] * scaleBy; 
     if (newScale < .2 || newScale > 5) return;
+    const { x, y, width, height } = centerRef.current.getBoundingClientRect();
+    coords.current[0] = (((x + (width / 2) - clientX) * scaleBy)
+      + clientX - (window.innerWidth / 2)) / newScale;
+    coords.current[1] = (((y + (height / 2) - clientY) * scaleBy)
+      + clientY - (window.innerHeight / 2)) / newScale;
     coords.current[2] = newScale;
     centerRef.current.style.setProperty('--scale', coords.current[2]);
+    centerRef.current.style.setProperty('--offset-x', `${coords.current[0]}px`);
+    centerRef.current.style.setProperty('--offset-y', `${coords.current[1]}px`);
   }, [coords]);
 
-  useEffect(() => {
-    if (!centerRef.current || ! boardRef.current) return;
-    const boardElement = boardRef.current;
-    let lastTouches = null;
-    const touchListener = (e) => {
-      if (lastTouches && lastTouches.length === e.touches.length) {
-        e.preventDefault();
-        if (e.touches.length === 1) {
-          e.movementX = e.touches[0].pageX - lastTouches[0].pageX;
-          e.movementY = e.touches[0].pageY - lastTouches[0].pageY;
-          move(e);
-        } else if (e.touches.length === 2) {
-          const r = Math.sqrt(distSq(...e.touches) / distSq(...lastTouches));
-          const newScale = coords.current[2] * r;
-          if (newScale < .2 || newScale > 5) return;
-          coords.current[2] = newScale;
-          centerRef.current.style.setProperty('--scale', coords.current[2]);
-        }
+  const lastTouches = useRef(null);
+  const touchMoveListener = useCallback((e) => {
+    if (lastTouches.current && lastTouches.current.length === e.touches.length) {
+      e.preventDefault();
+      if (e.touches.length === 1) {
+        e.movementX = e.touches[0].pageX - lastTouches.current[0].pageX;
+        e.movementY = e.touches[0].pageY - lastTouches.current[0].pageY;
+        move(e);
+      } else if (e.touches.length === 2) {
+        const r = Math.sqrt(pageDist(...e.touches) / pageDist(...lastTouches.current));
+        const newScale = coords.current[2] * r;
+        if (newScale < .2 || newScale > 5) return;
+        const centerX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
+        const centerY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
+        const { x, y, width, height } = centerRef.current.getBoundingClientRect();
+        coords.current[0] = (((x + (width / 2) - centerX) * r)
+          + centerX - (window.innerWidth / 2)) / newScale;
+        coords.current[1] = (((y + (height / 2) - centerY) * r)
+          + centerY - (window.innerHeight / 2)) / newScale;
+        coords.current[2] = newScale;
+        centerRef.current.style.setProperty('--scale', coords.current[2]);
+        centerRef.current.style.setProperty('--offset-x', `${coords.current[0]}px`);
+        centerRef.current.style.setProperty('--offset-y', `${coords.current[1]}px`);
       }
-      lastTouches = e.touches;
-    };
-    const endTouchListener = (e) => {
-      setMoving(false);
-      lastTouches = null;
-    };
-    boardRef.current.addEventListener('touchmove', touchListener);
-    boardRef.current.addEventListener('touchend', endTouchListener);
-    return () => {
-      boardElement.removeEventListener('touchmove', touchListener);
-      boardElement.removeEventListener('touchend', endTouchListener);
-    };
-  }, [move, setMoving]);
+    }
+    lastTouches.current = e.touches;
+  }, [coords, move]);
+  const touchEndListener = useCallback(() => {
+    setMoving(false);
+    lastTouches.current = null;
+  }, [setMoving]);
 
   return (
-    <div className="game-board" ref={boardRef} onMouseMove={move}
-      onClickCapture={doneMoving} onWheel={onWheel}>
+    <div className="game-board"
+      onTouchMove={touchMoveListener}
+      onTouchEnd={touchEndListener}
+      onMouseMove={move}
+      onClickCapture={doneMoving}
+      onWheel={onWheel}>
       <div className="center-piece" ref={centerRef}>
         {pieces}
       </div>

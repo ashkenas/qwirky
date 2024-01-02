@@ -1,5 +1,5 @@
 import { useCallback, useContext, useRef, useState } from "react";
-import { acquireDrag, GameContext, GameDispatchContext, releaseDrag, select } from "../contexts/GameContext";
+import { GameContext, GameDispatchContext, select } from "../contexts/GameContext";
 import { motion, useMotionValue } from "framer-motion";
 import "../styles/Gamepiece.scss";
 
