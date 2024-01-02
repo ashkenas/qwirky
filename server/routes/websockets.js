@@ -71,6 +71,11 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       if (game.board[x]?.[y])
         throw new Error('Invalid move. Cannot place a tile in an occupied space.');
 
+      if (!game.board[x + 1]?.[y] && !game.board[x - 1]?.[y]
+            && !game.board[x]?.[y + 1] && !game.board[x]?.[y - 1]) {
+        throw new Error('Invalid move. Cannot place a floating tile.');
+      }
+
       if (!game.board[x])
         game.board[x] = {};
       game.board[x][y] = val;
