@@ -95,7 +95,7 @@ export const gameReducer = (state, action) => {
     if (!state.yourTurn || !val || (state.board && state.board[x]?.[y]))
       return { ...state };
 
-    if (!state.board[x + 1]?.[y] && !state.board[x - 1]?.[y]
+    if (state.board && !state.board[x + 1]?.[y] && !state.board[x - 1]?.[y]
           && !state.board[x]?.[y + 1] && !state.board[x]?.[y - 1])
       return { ...state };
 

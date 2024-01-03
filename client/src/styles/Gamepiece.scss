@@ -2,8 +2,6 @@
 @import "_base";
 
 $stripe-count: 8;
-$tile-size: 5em;
-
 $stripe-width: math.div($tile-size * 1.414, $stripe-count);
 $stripe-width-double: $stripe-width * 2;
 

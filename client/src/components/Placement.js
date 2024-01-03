@@ -21,7 +21,6 @@ export default function Placement({ x, y }) {
       className={`placement${center ? ' hover' : ''}`}
       onClick={onClick}
       onMouseUp={onDragEnd}
-      onTouchEnd={onDragEnd}
       style={{ top: `${-y}00%`, left: `${x}00%` }} />
   );
 }

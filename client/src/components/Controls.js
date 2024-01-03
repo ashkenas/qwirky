@@ -42,29 +42,60 @@ export default function Controls({ ws }) {
   return (
     <div className="controls">
       <div className="rack">
-        {hand.map((val, x) =>
-          <Gamepiece key={val} value={val} x={x} selected={x === selected}
-            racked highlight={trading && toTrade.includes(x)} />
-        )}
-      </div>
-      <div className="buttons">
-        {yourTurn && tilesLeft > 0 && placed.length === 0 && !trading &&
-          <button className="trade" onClick={doStartTrade}>
-            Trade With Bag
-          </button>
-        }
-        {trading && (<>
-          <button className="btn-1" onClick={doCancelTrade}>
-            Cancel
-          </button>
-          <button className="btn-2" onClick={doTrade}>Confirm</button>
-        </>)}
-        {placed.length > 0 && (<>
-          <button className="btn-1" onClick={() => dispatch(pickup())}>
-            Undo
-          </button>
-          <button className="btn-2" onClick={submit}>Submit</button>
-        </>)}
+        <div className="game-button">
+          {trading &&
+            <button className="btn-1" onClick={doCancelTrade}>
+              Cancel
+            </button>
+          }
+          {placed.length > 0 &&
+            <button className="btn-1" onClick={() => dispatch(pickup())}>
+              Undo
+            </button>
+          }
+        </div>
+        <div className="pieces">
+          {hand.map((val, x) =>
+            <Gamepiece key={val} value={val} x={x} selected={x === selected}
+              racked highlight={trading && toTrade.includes(x)} />
+          )}
+        </div>
+        <div className="game-button">
+          {yourTurn && tilesLeft > 0 && placed.length === 0 && !toTrade.length &&
+            <button className="trade" onClick={doStartTrade}>
+              {trading ? 'Select Pieces' : 'Trade With Bag'}
+            </button>
+          }
+          {toTrade.length > 0 &&
+            <button className="btn-2" onClick={doTrade}>Confirm</button>
+          }
+          {placed.length > 0 &&
+            <button className="btn-2" onClick={submit}>Make Move</button>
+          }
+        </div>
+        <div className="buttons">
+          {yourTurn && tilesLeft > 0 && placed.length === 0 && !toTrade.length &&
+            <button className="trade" onClick={doStartTrade}>
+              {trading ? 'Select Pieces' : 'Trade With Bag'}
+            </button>
+          }
+          {toTrade.length > 0 &&
+            <button className="btn-2" onClick={doTrade}>Confirm</button>
+          }
+          {placed.length > 0 &&
+            <button className="btn-2" onClick={submit}>Make Move</button>
+          }
+          {trading &&
+            <button className="btn-1" onClick={doCancelTrade}>
+              Cancel
+            </button>
+          }
+          {placed.length > 0 &&
+            <button className="btn-1" onClick={() => dispatch(pickup())}>
+              Undo
+            </button>
+          }
+        </div>
       </div>
     </div>
   );

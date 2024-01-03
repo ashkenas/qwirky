@@ -1,3 +1,5 @@
+@import "_base";
+
 .game-board {
   position: absolute;
   top: 0;
@@ -12,8 +14,8 @@
     --offset-y: 0px;
     --scale: 1;
     position: absolute;
-    width: 5rem;
-    height: 5rem;
+    width: $tile-size;
+    height: $tile-size;
     top: calc(calc(calc(var(--vh) * 50) - 2.5rem));
     left: calc(calc(calc(var(--vw) * 50) - 2.5rem));
     transform-origin: calc(50% - var(--offset-x)) calc(50% - var(--offset-y));

@@ -1,10 +1,12 @@
+@import "_base";
+
 button.placement {
   position: absolute;
   display: block;
   border: none;
   background-color: inherit;
-  height: 5rem;
-  width: 5rem;
+  height: $tile-size;
+  width: $tile-size;
   transition: .2s background-color;
   cursor: pointer;
 
