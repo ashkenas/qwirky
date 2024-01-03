@@ -5,7 +5,7 @@ import "../styles/Gamepiece.scss";
 
 export default function Gamepiece({ value, x, y, highlight, placing, selected, racked }) {
   const dispatch = useContext(GameDispatchContext);
-  const { coords, dragDisabled } = useContext(GameContext);
+  const { coords, dragDisabled, yourTurn } = useContext(GameContext);
   const [dragging, setDragging] = useState(false);
   const doSelect = useCallback(() => {
     dispatch(select(x));
@@ -50,14 +50,14 @@ export default function Gamepiece({ value, x, y, highlight, placing, selected, r
     <motion.div
       className={classes}
       onClick={doSelect}
-      drag
+      drag={yourTurn}
       whileDrag={{ scale: coords.current[2], zIndex: 100 }}
       onDragStart={doStartDrag}
       onDragEnd={doEndDrag}
       onTouchMove={doTouchMove}
       animate={{
         x: dragging ? ax : 0,
-        y: dragging ? ay : (selected ? -10 : 0)
+        y: dragging ? ay : (selected ? -8 : 0)
       }}
       transition={{ type: "spring", stiffness: 1000, damping: 100 }} />
   );

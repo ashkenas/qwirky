@@ -1,14 +1,12 @@
 import GameBoard from "./GameBoard";
 import Controls from "./Controls";
-import { Link } from "react-router-dom";
 import { useWebSocket } from "../util";
 import { useContext } from "react";
 import { GameDispatchContext } from "../contexts/GameContext";
 import Loading from "./Loading";
-import Scoreboard from "./Scoreboard";
-import TileCounter from "./TileCounter";
 import CenterPopup from "./CenterPopup";
 import ErrorPage from "./ErrorPage";
+import GameStatusBar from "./GameStatusBar";
 
 export default function GamePage() {
   const dispatch = useContext(GameDispatchContext)
@@ -17,13 +15,11 @@ export default function GamePage() {
   if (code) return <ErrorPage message={message} status={code} />
   if (!ws) return <Loading message={message}/>;
 
-  return (
+  return (<>
+    <GameStatusBar />
     <CenterPopup>
       <GameBoard />
       <Controls ws={ws} />
-      <Scoreboard />
-      <TileCounter />
-      <Link to="/dash" className="back" />
     </CenterPopup>
-  );
+  </>);
 };

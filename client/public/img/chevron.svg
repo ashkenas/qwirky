@@ -1,0 +1,12 @@
+<svg version="1.1" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    path {
+      stroke: white;
+      fill: transparent;
+      stroke-width: 3;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+  </style>
+  <path d="M 5,2 L 11,8 L 5,14" />
+</svg>

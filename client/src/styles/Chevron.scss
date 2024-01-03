@@ -1,0 +1,13 @@
+img.chevron {
+  --rotation: 0deg;
+  vertical-align: middle;
+  height: .8rem;
+  width: .8rem;
+  margin-right: .125rem;
+  transition: transform .25s;
+  transform: rotate(var(--rotation));
+}
+
+:hover > img.chevron {
+  transform: rotate(var(--rotation)) translateX(2px);
+}

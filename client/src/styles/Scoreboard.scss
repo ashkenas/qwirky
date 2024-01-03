@@ -1,43 +1,49 @@
 @import "_base";
 
 .scoreboard {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  padding: .25rem .75rem;
-  background-color: $color5;
-  border-radius: 8px;
-  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  transform: translateY(-105%);
+  background-color: #66666699;
+  touch-action: none;
+  pointer-events: none;
   user-select: none;
+  z-index: -1;
+  font-weight: normal;
+  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.4);
+  transition: transform .25s;
 
   table {
+    border-collapse: collapse;
     display: inline-table;
   }
 
-  td:first-child, th:first-child {
-    padding-right: .25rem;
+  thead tr {
+    background-color: #38383899;
+  }
+
+  thead tr:first-child {
+    background-color: #38383899;//#2f2f2f99;
+  }
+
+  th {
+    font-weight: 500;
+  }
+
+  td, th {
+    padding: .25rem .5rem;
   }
 
   td + td {
     text-align: right;
   }
 
-  td {
-    user-select: none;
+  tr:not(:first-child) td {
+    border-top: 1px solid #77777799;
   }
 }
 
-.dropdown {
-  display: inline-block;
-  margin-right: .25rem;
-
-  &::before {
-    content: '⯈';
-    display: inline-block;
-    transition: transform .1s; 
-  }
-
-  &.open::before {
-    transform: rotate(90deg);
-  }
+.scoreboard.show, :focus-visible > .scoreboard {
+  transform: translateY(0);
 }

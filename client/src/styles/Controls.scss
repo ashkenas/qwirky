@@ -5,17 +5,20 @@
   flex-flow: column nowrap;
   align-items: center;
   position: fixed;
-  bottom: 1rem;
+  bottom: 0;
   width: 100%;
-  padding: .75rem .25rem .5rem .25rem;
+  padding: 1.25rem .25rem .5rem .25rem;
   background-color: #66666699;
+  user-select: none;
 
   .rack {
     width: 31em;
+    user-select: none;
 
     .piece {
       position: relative;
       display: inline-block;
+      user-select: none;
 
       &:not(:last-child) {
         margin-right: .2em;
@@ -32,12 +35,14 @@
     display: flex;
     flex-flow: row nowrap;
     width: 31rem;
+    user-select: none;
 
     button {
       padding: 1rem;
       font-size: 1rem;
       border-radius: 4px;
       border: none;
+      user-select: none;
     }
 
     .trade {
@@ -68,7 +73,6 @@
     flex-flow: row nowrap;
     justify-content: center;
     align-items: flex-start;
-    bottom: 0rem;
 
     .rack {
       width: 15.4rem;

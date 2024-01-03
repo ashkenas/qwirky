@@ -1,0 +1,80 @@
+.game-status-bar {
+  $background: #515151;
+  $background-hover: scale-color($background, $lightness: 20%);
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  background-color: $background;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  font-weight: bold;
+  user-select: none;
+
+  #home-link {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover, &:focus {
+      outline: none;
+      background-color: $background-hover;
+    }
+  }
+
+  > span, a {
+    padding: .5rem;
+    white-space: nowrap;
+  }
+
+  #current-player {
+    display: inline-block;
+    margin: 0 0 0 auto;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding-right: 0;
+
+    & + span {
+      padding-left: 0;
+      margin: 0 auto 0 0;
+    }
+  }
+
+  #tile-counter {
+    position: relative;
+    transition: background-color .1s;
+
+    & span {
+      position: absolute;
+      display: block;
+      padding: .5rem;
+      top: 100%;
+      left: 0;
+      background-color: rgba($background, .6);
+      z-index: -1;
+      transform: translateY(-105%);
+      transition: transform .25s;
+    }
+
+    &:hover, &:focus {
+      outline: none;
+      background-color: $background-hover;
+    }
+
+    &:hover span, &:focus span {
+      transform: translateY(0);
+    }
+  }
+
+  #scoreboard-btn {
+    display: inline-block;
+    cursor: pointer;
+
+    &:hover, &:focus {
+      outline: none;
+      background-color: $background-hover;
+    }
+  }
+}
