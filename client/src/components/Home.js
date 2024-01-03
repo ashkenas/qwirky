@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 import { useContext, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { auth, AuthContext } from "../contexts/firebase";
@@ -30,7 +30,7 @@ export default function Home() {
           A fun online multiplayer tile matching game.
           Score the most points to win!
         </p>
-        <button className="social-btn" onClick={() => signInWithPopup(auth, googleProvider)}>
+        <button className="social-btn" onClick={() => signInWithRedirect(auth, googleProvider)}>
           <img src="/google-signin.svg" alt="Sign in with Google"/>
           Sign in with Google
         </button>

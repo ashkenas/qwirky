@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, getRedirectResult } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import Loading from "../components/Loading";
 
@@ -30,6 +30,11 @@ export function AuthProvider({ children }) {
       })
     );
   }, []);
+
+  getRedirectResult(auth).then(result => {
+    if (result?.user)
+      setState({ user: result.user, loading: false });
+  });
 
   if (loading) return <Loading />;
 
