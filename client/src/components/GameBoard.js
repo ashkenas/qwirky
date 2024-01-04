@@ -67,6 +67,7 @@ export default function GameBoard() {
   const wheelListener = useCallback((e) => {
     e.preventDefault();
     const { clientX, clientY, deltaY } = e;
+    console.log(e);
     const scaleBy = deltaY < 0 ? 1.1 : 0.909090909;
     const newScale = coords.current[2] * scaleBy; 
     if (newScale < .2 || newScale > 5) return;

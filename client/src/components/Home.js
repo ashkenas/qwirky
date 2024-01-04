@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -98,7 +98,7 @@ export default function Home() {
             The Rules&nbsp;<Chevron expand="Left" />
           </h2>
         </Link>
-        <button className="social-btn" onClick={() => signInWithRedirect(auth, googleProvider)}>
+        <button className="social-btn" onClick={() => signInWithPopup(auth, googleProvider)}>
           <img src="/google-signin.svg" alt="Sign in with Google"/>
           Sign in with Google
         </button>
