@@ -118,11 +118,9 @@ $back-arrow-offset: math.div($back-arrow-height - $back-arrow-width, 2.828);
 .columns {
   display: flex;
   flex-flow: row wrap;
-  height: 100%;
   margin: 0 auto;
   padding: 1rem 0;
   width: calc(960px - 10rem);
-  height: 100%;
 
   .column {
     display: flex;

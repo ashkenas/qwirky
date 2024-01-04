@@ -3,7 +3,7 @@ img.chevron {
   vertical-align: middle;
   height: .8em;
   width: .8em;
-  margin-right: .125rem;
+  margin: 0;
   transition: transform .25s;
   transform: rotate(var(--rotation));
 }

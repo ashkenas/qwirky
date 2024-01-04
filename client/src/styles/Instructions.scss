@@ -1,10 +1,44 @@
+@import "_base";
+
 .demo-board {
+  $tile-size: 2.5rem;
   position: relative;
+  height: calc(calc(var(--height, 1) * $tile-size));
+  width: calc(var(--width, 1) * $tile-size);
+  margin: 0 auto;
 
   .center-piece {
     position: relative;
-    width: 5rem;
-    height: 5rem;
-    // transform: scale(.5);
+    width: $tile-size;
+    height: $tile-size;
   }
+
+  .piece {
+    width: $tile-size;
+    height: $tile-size;
+  }
+}
+
+.instructions .item {
+  h3 {
+    margin: 0 0 .5rem 0;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: .5rem;
+  }
+}
+
+.instructions .item:not(.demo) {
+  line-height: 1.5;
+}
+
+.instructions .item.demo {
+  padding: .75rem 0;
 }

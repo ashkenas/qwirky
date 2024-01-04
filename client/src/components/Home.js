@@ -1,9 +1,10 @@
 import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { auth, AuthContext } from "../contexts/firebase";
 import "../styles/Home.scss";
+import Chevron from "./Chevron";
 import Gamepiece from "./Gamepiece";
 
 const googleProvider = new GoogleAuthProvider();
@@ -92,6 +93,11 @@ export default function Home() {
         <p>
           A simple yet fun multiplayer tile matching game.
         </p>
+        <Link to="/how-to" className="landing-rules">
+          <h2>
+            The Rules&nbsp;<Chevron expand="Left" />
+          </h2>
+        </Link>
         <button className="social-btn" onClick={() => signInWithRedirect(auth, googleProvider)}>
           <img src="/google-signin.svg" alt="Sign in with Google"/>
           Sign in with Google

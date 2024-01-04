@@ -64,18 +64,22 @@ label {
 .item.sign-out {
   color: #fa7e7e;
   cursor: pointer;
+  user-select: none;
+  background-color: rgba(#fa7e7e, .1);
 
   &:hover, :focus-visible {
-    background-color: rgba(#fa7e7e, .2);;
+    background-color: rgba(#fa7e7e, .2);
   }
 }
 
 .item.start {
   color: #93fa7e;
   cursor: pointer;
+  user-select: none;
+  background-color: rgba(#93fa7e, .1);
 
   &:hover, :focus-visible {
-    background-color: rgba(#93fa7e, .2);;
+    background-color: rgba(#93fa7e, .2);
   }
 }
 

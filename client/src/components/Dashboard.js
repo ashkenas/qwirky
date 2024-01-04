@@ -8,6 +8,7 @@ import Accordion from "./Accordion";
 import "../styles/Dashboard.scss";
 import Friend from "./Friend";
 import FriendRequest from "./FriendRequest";
+import Chevron from "./Chevron";
 
 export default function Dashboard() {
   const [name, setName] = useState('');
@@ -176,6 +177,11 @@ export default function Dashboard() {
     </h1>
     <div className="columns">
       <div className="column">
+        <Link to="/how-to" className="section">
+          <h2>
+            The Rules<Chevron expand="Left" />
+          </h2>
+        </Link>
         <Accordion initial={"New Game"}>
           <DashboardSection title={"Profile"}>
             <div className="item">

@@ -17,7 +17,7 @@ export default function GameStatusBar() {
     <div className="game-status-bar">
       <Link id="home-link" to="/dash">
         <Chevron left />
-        Home
+        &nbsp;Home
       </Link>
       <span tabIndex={0} id="tile-counter">
         {tilesLeft}
@@ -27,7 +27,7 @@ export default function GameStatusBar() {
       <span>'s turn</span>
       <span tabIndex={0} id="scoreboard-btn" onClick={toggleScoreboard}>
         <Chevron down={!showScoreboard} up={showScoreboard} />
-        Scoreboard
+        &nbsp;Scoreboard
         <Scoreboard show={showScoreboard} />
       </span>
     </div>

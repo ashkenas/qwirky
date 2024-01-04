@@ -2,7 +2,7 @@
 @import "_base";
 
 $stripe-count: 8;
-$stripe-width: math.div($tile-size * 1.414, $stripe-count);
+$stripe-width: math.div(100%, $stripe-count * 2);
 $stripe-width-double: $stripe-width * 2;
 
 @mixin sym-1($color) {
@@ -48,7 +48,7 @@ $stripe-width-double: $stripe-width * 2;
   width: 60%;
   height: 60%;
   box-sizing: border-box;
-  border: .5rem solid $color;
+  border: math.div($tile-size, 10) solid $color;
 }
 
 div.piece {

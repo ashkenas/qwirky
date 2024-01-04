@@ -10,9 +10,9 @@ export default function DashboardSection({ title, children }) {
 
   return (
       <motion.section className="section">
-        <motion.h1 onClick={() => setOpen(isOpen ? false : title)}>
-          {title} <Chevron down={!isOpen} up={isOpen} />
-        </motion.h1>
+        <motion.h2 onClick={() => setOpen(isOpen ? false : title)}>
+          {title} <Chevron down={!isOpen} up={isOpen} expand="Left" />
+        </motion.h2>
         <AnimatePresence initial={false}>
           {isOpen &&
             <motion.div
