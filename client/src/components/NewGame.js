@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAction, useData } from "../util";
-import "../styles/NewGame.scss";
 import { useCallback, useState } from "react";
 import Loading from "./Loading";
 

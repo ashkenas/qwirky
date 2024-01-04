@@ -1,99 +1,8 @@
 @use "sass:math";
 @import "_base";
 
-$arrow-width: 4px;
-
-.game-card {
-  @include button($color5);
-  border-radius: 8px;
-  padding: .75rem;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  
-  &:not(:last-child) {
-    margin-bottom: 1rem;
-  }
-
-  .game-name {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin: 0 0 .5rem 0;
-  }
-
-  .game-players {
-    margin: 0;
-  }
-}
-
-h1.has-input {
-  display: flex;
-  flex-flow: row nowrap;
-
-  input {
-      display: flex;
-      flex: 1;
-      font-size: 1em;
-  }
-}
-
-$arrow-half-width: math.div($arrow-width, 2);
-
-.navbtn {
-  position: relative;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  padding: 1rem;
-  text-decoration: none;
-  font-size: 1.25rem;
-  text-align: left;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-
-  &.a {
-    @include button($color2);
-  }
-  &.b {
-    @include button($color6);
-  }
-  &.c {
-    @include button($color1);
-  }
-  &.d {
-    @include button($color4);
-
-    &.loading {
-      @include loading;
-    }
-  }
-
-  &:not(.d) {
-    &::after, &::before {
-      content: '';
-      display: block;
-      position: absolute;
-      width: $arrow-width;
-      border-radius: $arrow-half-width;
-      height: 16px;
-      right: 1rem;
-    }
-  
-    &::after {
-      bottom: calc(50% - $arrow-half-width);
-      background-color: $text-color;
-      transform-origin: 50% calc(100% - $arrow-half-width);
-      transform: rotate(315deg);
-    }
-  
-    &::before {
-      top: calc(50% - $arrow-half-width);
-      background-color: $text-color;
-      transform-origin: 50% $arrow-half-width;
-      transform: rotate(45deg);
-    }
-  }
+.title.dash {
+  margin: 2rem auto;
 }
 
 .control {
@@ -149,4 +58,33 @@ label {
 .item.friend .remove {
   color: #fa7e7e;
   margin: 0 0 0 auto;
+}
+
+.item.game {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+
+  &.indicated {
+    background-color: rgba(181, 124, 216, 0.1);
+  }
+
+  .name {
+    margin: 0 0 .5rem 0;
+    font-weight: 500;
+  }
+
+  .players {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: .5rem;
+  }
 }

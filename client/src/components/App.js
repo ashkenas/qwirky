@@ -4,7 +4,6 @@ import { AuthProvider } from '../contexts/firebase';
 import ErrorPage from './ErrorPage';
 import Dashboard from './Dashboard';
 import Protect from './Protect';
-import Friends from './Friends';
 import NewGame from './NewGame';
 import { DataProvider } from '../contexts/DataContext';
 import GamePage from './GamePage';
@@ -23,14 +22,6 @@ const router = createBrowserRouter([
       </Protect>
     ),
     path: '/dash'
-  },
-  {
-    element: (
-      <Protect>
-        <Friends />
-      </Protect>
-    ),
-    path: '/friends'
   },
   {
     element: <Instructions />,

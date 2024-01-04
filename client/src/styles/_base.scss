@@ -158,7 +158,7 @@ $back-arrow-offset: math.div($back-arrow-height - $back-arrow-width, 2.828);
     }
 
     .column:not(:last-child) {
-      margin: 0 0 1rem 0;
+      margin: 0;
       flex: 0;
     }
   }

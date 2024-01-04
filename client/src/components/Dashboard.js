@@ -13,7 +13,7 @@ export default function Dashboard() {
   const onGetProfileComplete = useCallback((data) =>
     setName(data.username)
   , [setName]);
-  const { data, error, loading, refetch } = useData('/api/profile', {
+  const profile = useData('/api/profile', {
     onComplete: onGetProfileComplete
   });
   const onSetUsernameError = useCallback((status, message) => {
@@ -24,7 +24,7 @@ export default function Dashboard() {
   const [setUsername, { loading: editLoading }] =
     useAction('/api/profile/username', {
       method: 'post',
-      onComplete: refetch,
+      onComplete: profile.refetch,
       onError: onSetUsernameError
     });
     
@@ -63,16 +63,57 @@ export default function Dashboard() {
     setFriendName(e.target.value);
   }, [setFriendName])
 
-  if (error) return error;
-  if (loading && !data) return <Loading />;
+  if (profile.error) return profile.error;
+  if (profile.loading && !profile.data) return <Loading />;
 
-  return (
+  let games = [<div className="item">No games available.</div>];
+  let finishedGames = [<div className="item">No games available.</div>];
+  if (profile.data && profile.data.games) {
+    const notOver = profile.data.games.filter(game => !game.over);
+    if (notOver.length) {
+      games = notOver.map(game => {
+        const yourTurn =
+          game.usernames[game.currentPlayer] === profile.data.username;
+        const extra = yourTurn ? ' indicated' : '';
+        return (
+          <Link key={game._id}
+            className={`item clickable game${extra}`}
+            to={`/game/${game._id}`}>
+            <p className="name">{game.name}</p>
+            {yourTurn && <span className="indicator">Your Turn</span>}
+            <p className="players">
+              {game.usernames.join(', ')}
+            </p>
+          </Link>
+        );
+      });
+    }
+    const over = profile.data.games.filter(game => game.over);
+    if (over.length) {
+      finishedGames = notOver.map(game => (
+        <Link key={game._id}
+          className="item clickable game" to={`/game/${game._id}`}>
+          <p className="name">{game.name}</p>
+          <p className="players">
+            {game.usernames.join(', ')}
+          </p>
+        </Link>
+      ));
+    }
+  }
+
+  return (<>
+    <h1 className="title dash">
+      <span className="color1">Q</span>
+      <span className="color2">w</span>
+      <span className="color3">i</span>
+      <span className="color4">r</span>
+      <span className="color5">k</span>
+      <span className="color6">y</span>
+    </h1>
     <div className="columns">
       <div className="column">
-        <h1 className="has-input">
-          Hello,&nbsp;{data.username}
-        </h1>
-        <Accordion initial={"Friends"}>
+        <Accordion initial={"New Game"}>
           <DashboardSection title={"Profile"}>
             <div className="item">
               <form onSubmit={onSubmitSetUsername}>
@@ -93,7 +134,7 @@ export default function Dashboard() {
             </div>
             <div className="item clickable"
               onClick={() => auth.signOut()}
-              ariaRole="button">
+              role="button">
               Sign Out
             </div>
           </DashboardSection>
@@ -125,27 +166,20 @@ export default function Dashboard() {
             )}
           </DashboardSection>
           <DashboardSection title={"New Game"}>
-          </DashboardSection>
-          <DashboardSection title={"In-progress Games"}>
-          </DashboardSection>
-          <DashboardSection title={"Finished Games"}>
+
           </DashboardSection>
         </Accordion>
-        <Link to="/new" className="navbtn b">New Game</Link>
       </div>
       <div className="column">
-        <h1 className="is-desktop" style={{ userSelect: 'none' }}>&nbsp;</h1>
-        <div className="column-body">
-          {data && data.games && data.games.map(game => (
-            <Link key={game._id} className="game-card" to={`/game/${game._id}`}>
-              <p className="game-name">{game.name}</p>
-              <p className="game-players">
-                {game.usernames.join(', ')}
-              </p>
-            </Link>
-          ))}
-        </div>
+        <Accordion initial={"In-Progress Games"}>
+          <DashboardSection title={"In-Progress Games"}>
+            {games}
+          </DashboardSection>
+          <DashboardSection title={"Finished Games"}>
+            {finishedGames}
+          </DashboardSection>
+        </Accordion>
       </div>
     </div>
-  );
+  </>);
 };
