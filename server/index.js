@@ -127,7 +127,7 @@ server.on('upgrade', (req, socket, head) => {
   
       try {
         const user = await users.getUserByUid(uid);
-        if (!user.games.find(g => g.equals(req.game))) {
+        if (!user.games.some(g => g.equals(req.game))) {
           ws.send(connectionError(404, 'Not Found'));
           ws.terminate();
           return;

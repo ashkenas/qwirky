@@ -159,7 +159,7 @@ export default function Dashboard() {
   
   const searchResults = friends.data?.friends.filter(friend =>
     friend.username.includes(friendSearch)
-  );
+  ) || [];
   let resultItems = [<div className="item keep">No results.</div>];
   if (searchResults.length) {
     resultItems = searchResults.map(friend =>

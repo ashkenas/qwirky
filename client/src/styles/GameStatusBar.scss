@@ -22,22 +22,21 @@
     }
   }
 
-  > span, a {
+  span, a {
     padding: .5rem;
     white-space: nowrap;
   }
 
   #current-player {
     display: inline-block;
-    margin: 0 0 0 auto;
-    display: inline-block;
     text-overflow: ellipsis;
+    margin: 0 0 0 auto;
     overflow: hidden;
     vertical-align: bottom;
-    padding-right: 0;
+    padding: 0;
 
     & + span {
-      padding-left: 0;
+      padding: 0;
       margin: 0 auto 0 0;
     }
   }
@@ -49,7 +48,6 @@
     & span {
       position: absolute;
       display: block;
-      padding: .5rem;
       top: 100%;
       left: 0;
       background-color: rgba($background, .6);

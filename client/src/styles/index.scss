@@ -29,3 +29,9 @@ html, body {
 *, *::after, *::before {
   box-sizing: inherit;
 }
+
+@media screen and (max-width: 320px) {
+  html, body {
+    font-size: 13px;
+  }  
+}
