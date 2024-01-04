@@ -7,6 +7,7 @@ import DashboardSection from "./DashboardSection";
 import Accordion from "./Accordion";
 import "../styles/Dashboard.scss";
 import Friend from "./Friend";
+import FriendRequest from "./FriendRequest";
 
 export default function Dashboard() {
   const [name, setName] = useState('');
@@ -82,7 +83,9 @@ export default function Dashboard() {
             <p className="name">{game.name}</p>
             {yourTurn && <span className="indicator">Your Turn</span>}
             <p className="players">
-              {game.usernames.join(', ')}
+              {game.usernames.map(u =>
+                u === profile.data.username ? 'you' : u
+              ).join(', ')}
             </p>
           </Link>
         );
@@ -95,7 +98,9 @@ export default function Dashboard() {
           className="item clickable game" to={`/game/${game._id}`}>
           <p className="name">{game.name}</p>
           <p className="players">
-            {game.usernames.join(', ')}
+            {game.usernames.map(u =>
+              u === profile.data.username ? 'you' : u
+            ).join(', ')}
           </p>
         </Link>
       ));
@@ -113,7 +118,7 @@ export default function Dashboard() {
     </h1>
     <div className="columns">
       <div className="column">
-        <Accordion initial={"New Game"}>
+        <Accordion initial={"Friends"}>
           <DashboardSection title={"Profile"}>
             <div className="item">
               <form onSubmit={onSubmitSetUsername}>
@@ -132,7 +137,7 @@ export default function Dashboard() {
                 </div>
               </form>
             </div>
-            <div className="item clickable"
+            <div className="item clickable red"
               onClick={() => auth.signOut()}
               role="button">
               Sign Out
@@ -157,14 +162,26 @@ export default function Dashboard() {
               </form>
             </div>
             {!friends.data && friends.loading && <Loading inline />}
-            {friends.error ?
+            {!friends.loading && friends.error ?
               <div className="item">
                 Something went wrong. Please try again later.
               </div>
-            : friends.data.friends.map(friend =>
+            : friends.data && friends.data.friends.map(friend =>
               <Friend key={friend._id} friend={friend} refetch={friends.refetch} />
             )}
           </DashboardSection>
+          {!!friends.data.requests.length &&
+            <DashboardSection title={"Friend Requests"}>
+              {!friends.data && friends.loading && <Loading inline />}
+              {!friends.loading && friends.error ?
+                <div className="item">
+                  Something went wrong. Please try again later.
+                </div>
+              : friends.data && friends.data.requests.map(friend =>
+                <FriendRequest key={friend._id} friend={friend} refetch={friends.refetch} />
+              )}
+            </DashboardSection>
+          }
           <DashboardSection title={"New Game"}>
 
           </DashboardSection>

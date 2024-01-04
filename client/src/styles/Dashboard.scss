@@ -53,11 +53,38 @@ label {
 
 .item.friend {
   display: flex;
+  align-items: center;
+  padding: 0 0 0 .75rem;
+}
+
+.item.red {
+  color: #fa7e7e;
 }
 
 .item.friend .remove {
   color: #fa7e7e;
   margin: 0 0 0 auto;
+  padding: .75rem;
+  cursor: pointer;
+
+  &:hover, &:focus-visible {
+    background-color: rgba(#fa7e7e, .2);
+  }
+}
+
+.item.friend .accept {
+  color: #93fa7e;
+  margin: 0 0 0 auto;
+  padding: .75rem;
+  cursor: pointer;
+
+  & + .remove {
+    margin: 0;
+  }
+
+  &:hover, &:focus-visible {
+    background-color: rgba(#93fa7e, .2);
+  }
 }
 
 .item.game {
@@ -86,5 +113,6 @@ label {
     top: 0;
     right: 0;
     padding: .5rem;
+    font-size: .8em;
   }
 }

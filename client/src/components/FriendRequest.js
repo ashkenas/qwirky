@@ -3,42 +3,44 @@ import { useAction } from "../util";
 
 export default function FriendRequest({ friend, refetch }) {
   const [confirming, setConfirming] = useState(false);
+  const onAcceptRequestError = useCallback(() => {
+    alert(`Failed to accept request from '${friend.username}'. Try again later.`);
+  }, []);
   const [acceptRequest, { loading }] = useAction(`/api/friends/accept/${friend._id}`, {
     method: 'post',
     onComplete: refetch,
-    onError: () => {
-      alert(`Failed to accept request from '${friend.username}'. Try again later.`);
-    }
+    onError: onAcceptRequestError
   });
+  const onRemoveRequestError = useCallback(() => {
+    setConfirming(false);
+    alert(`Failed to ignore request from '${friend.username}'. Try again later.`);
+  }, [])
   const [removeRequest, { loading: loadingRemove }] = useAction(`/api/friends/decline/${friend._id}`, {
     method: 'post',
     onComplete: refetch,
-    onError: () => {
-      setConfirming(false);
-      alert(`Failed to ignore request from '${friend.username}'. Try again later.`);
-    }
+    onError: onRemoveRequestError
   });
 
-  const clickAcceptRequest = useCallback(() => {
+  const onClickAcceptRequest = useCallback(() => {
     if (loading) return;
     acceptRequest();
   }, [loading, acceptRequest]);
 
-  const clickRemoveRequest = useCallback(() => {
+  const onClickRemoveRequest = useCallback(() => {
     if (loadingRemove) return;
     if (confirming) return removeRequest();
     setConfirming(true);
   }, [loadingRemove, confirming, setConfirming, removeRequest]);
 
   return (
-    <div className="friend">
-      <p className="friend-name">{friend.username}</p>
-      <button onClick={clickAcceptRequest} className="friend-accept">
+    <div className="item clickable friend">
+      {friend.username}
+      <span onClick={onClickAcceptRequest} className="accept">
         Accept
-      </button>
-      <button onClick={clickRemoveRequest} className="friend-remove">
+      </span>
+      <span onClick={onClickRemoveRequest} className="remove">
         {confirming ? 'Confirm' : 'Ignore'}
-      </button>
+      </span>
     </div>
   );
 };
