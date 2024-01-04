@@ -3,13 +3,14 @@ import { useAction } from "../util";
 
 export default function Friend({ friend, refetch }) {
   const [confirming, setConfirming] = useState(false);
+  const onRemoveFriendError = useCallback(() => {
+    setConfirming(false);
+    alert(`Could not delete friend '${friend.username}'.`);
+  }, [setConfirming, friend.username]);
   const [removeFriend, { loading }] = useAction(`/api/friends/${friend._id}`, {
     method: 'delete',
     onComplete: refetch,
-    onError: () => {
-      setConfirming(false);
-      alert(`Could not delete friend '${friend.username}'.`);
-    }
+    onError: onRemoveFriendError
   });
 
   const clickRemoveFriend = useCallback(() => {
@@ -19,9 +20,11 @@ export default function Friend({ friend, refetch }) {
   }, [loading, confirming, setConfirming, removeFriend]);
 
   return (
-    <div key={friend._id} className="item clickable friend" onClick={clickRemoveFriend}>
+    <div key={friend._id} className="item clickable buttons">
       {friend.username}
-      <span className="remove">{confirming ? 'Confirm' : 'Remove'}</span>
+      <span className="remove" onClick={clickRemoveFriend}>
+        {confirming ? 'Confirm' : 'Remove'}
+      </span>
     </div>
   );
 };

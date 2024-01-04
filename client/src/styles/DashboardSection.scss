@@ -27,6 +27,16 @@
     &.clickable:focus-visible {
       background-color: rgba(124, 150, 216, 0.1);
     }
+
+    &.super {
+      padding: 0;
+      max-height: 10rem;
+      overflow-y: auto;
+
+      & .item {
+        padding: 0 0 0 1.5rem;
+      }
+    }
   }
 
   &:not(:last-child) {

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../contexts/firebase";
 import { useAction, useData } from "../util";
 import Loading from "./Loading";
@@ -64,11 +64,50 @@ export default function Dashboard() {
     setFriendName(e.target.value);
   }, [setFriendName])
 
+  const [friendSearch, setFriendSearch] = useState('');
+  const onFriendSearchChange = useCallback((e) => {
+    setFriendSearch(e.target.value);
+  }, [setFriendSearch]);
+
+  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const addPlayer = useCallback((id) => () => {
+    if (selectedPlayers.length >= 3) return;
+    setSelectedPlayers([...selectedPlayers, id])
+  }, [selectedPlayers, setSelectedPlayers]);
+  const removePlayer = useCallback((id) => () => {
+    const idx = selectedPlayers.indexOf(id);
+    if (idx === -1) return;
+    const newPlayers = [...selectedPlayers];
+    newPlayers.splice(idx, 1)
+    setSelectedPlayers(newPlayers);
+  }, [selectedPlayers, setSelectedPlayers]);
+
+  const navigate = useNavigate();
+  const onCreateGameComplete = useCallback((data) =>
+    navigate(`/game/${data._id}`)
+  , [navigate]);
+  const onCreateGameError = useCallback(() =>
+    alert('An error occured, try again later.')
+  , []);
+  const [createGame, { loading: createLoading }] = useAction('/api/games', {
+    method: 'post',
+    onComplete: onCreateGameComplete,
+    onError: onCreateGameError
+  });
+  const onClickCreateGame = useCallback(() => {
+    if (createLoading) return;
+    if (!selectedPlayers.length || selectedPlayers.length > 3)
+      return alert('You must select 1-3 other players.');
+    createGame({ players: selectedPlayers });
+  }, [createLoading, selectedPlayers, createGame]);
+
   if (profile.error) return profile.error;
   if (profile.loading && !profile.data) return <Loading />;
 
-  let games = [<div className="item">No games available.</div>];
-  let finishedGames = [<div className="item">No games available.</div>];
+  let games = [<div key={0} className="item">No games available.</div>];
+  let finishedGames = [
+    <div key={0} className="item">No games available.</div>
+  ];
   if (profile.data && profile.data.games) {
     const notOver = profile.data.games.filter(game => !game.over);
     if (notOver.length) {
@@ -106,6 +145,25 @@ export default function Dashboard() {
       ));
     }
   }
+  
+  const searchResults = friends.data?.friends.filter(friend =>
+    friend.username.includes(friendSearch)
+  );
+  let resultItems = [<div className="item">No results.</div>];
+  if (searchResults.length) {
+    resultItems = searchResults.map(friend =>
+      <div key={friend._id} className="item clickable buttons">
+          {friend.username}
+          {selectedPlayers.includes(friend._id)
+          ? <span className="remove" onClick={removePlayer(friend._id)}>
+              Remove
+            </span>
+          : <span className="accept" onClick={addPlayer(friend._id)}>
+              Add
+            </span>}
+      </div>
+    );
+  }
 
   return (<>
     <h1 className="title dash">
@@ -118,7 +176,7 @@ export default function Dashboard() {
     </h1>
     <div className="columns">
       <div className="column">
-        <Accordion initial={"Friends"}>
+        <Accordion initial={"New Game"}>
           <DashboardSection title={"Profile"}>
             <div className="item">
               <form onSubmit={onSubmitSetUsername}>
@@ -137,7 +195,7 @@ export default function Dashboard() {
                 </div>
               </form>
             </div>
-            <div className="item clickable red"
+            <div className="item sign-out"
               onClick={() => auth.signOut()}
               role="button">
               Sign Out
@@ -170,7 +228,7 @@ export default function Dashboard() {
               <Friend key={friend._id} friend={friend} refetch={friends.refetch} />
             )}
           </DashboardSection>
-          {!!friends.data.requests.length &&
+          { friends.data?.requests.length > 0 &&
             <DashboardSection title={"Friend Requests"}>
               {!friends.data && friends.loading && <Loading inline />}
               {!friends.loading && friends.error ?
@@ -183,7 +241,34 @@ export default function Dashboard() {
             </DashboardSection>
           }
           <DashboardSection title={"New Game"}>
-
+            <div className="item">
+              Select 1-3 friends to play with you.
+            </div>
+            <div className="item">
+              <label htmlFor="search-friends">
+                Search Friends
+              </label>
+              <div className="control solo">
+                <input id="search-friends" type="text"
+                  onChange={onFriendSearchChange}
+                  onBlur={onFriendSearchChange} />
+              </div>
+            </div>
+            <div className="item super">
+              {resultItems}
+            </div>
+            <div className="item">
+                Selected Players: {selectedPlayers.map((fid, i) =>
+                  <span key={fid} className="cross-out"
+                    onClick={removePlayer(fid)}>
+                    {friends.data.friends.find(f => f._id === fid).username
+                      + (i < selectedPlayers.length - 1 ? ', ' : '')}
+                  </span>
+                )}
+            </div>
+            <div className="item start" onClick={onClickCreateGame}>
+              Start New Game
+            </div>
           </DashboardSection>
         </Accordion>
       </div>
