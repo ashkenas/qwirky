@@ -69,6 +69,7 @@ div.piece {
 
 div.piece.placing {
   background: repeating-linear-gradient(135deg, #444444, #444444 $stripe-width, #000000 $stripe-width, #000000 $stripe-width-double);
+  background-size: 200% 200%;
 };
 
 div.piece.highlight {

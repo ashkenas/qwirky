@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../contexts/firebase";
-import { useAction, useData } from "../util";
+import { useAction, useData, useWebSocket } from "../util";
 import Loading from "./Loading";
 import { useCallback, useState } from "react";
 import DashboardSection from "./DashboardSection";
@@ -102,6 +102,16 @@ export default function Dashboard() {
     createGame({ players: selectedPlayers });
   }, [createLoading, selectedPlayers, createGame]);
 
+  const dashDispatch = useCallback((action) => {
+    if (action.type === 'profile')
+      profile?.refetch();
+    else if (action.type === 'friends')
+      friends?.refetch();
+  // The linter isn't the smartest
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.refetch, friends?.refetch])
+  useWebSocket(dashDispatch);
+
   if (profile.error) return profile.error;
   if (profile.loading && !profile.data) return <Loading />;
 
@@ -150,7 +160,7 @@ export default function Dashboard() {
   const searchResults = friends.data?.friends.filter(friend =>
     friend.username.includes(friendSearch)
   );
-  let resultItems = [<div className="item">No results.</div>];
+  let resultItems = [<div className="item keep">No results.</div>];
   if (searchResults.length) {
     resultItems = searchResults.map(friend =>
       <div key={friend._id} className="item clickable buttons">

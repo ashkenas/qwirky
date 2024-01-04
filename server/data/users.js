@@ -95,7 +95,7 @@ export const getFriends = async uid => {
   };
 };
 
-export const makeFriendRequest = async (uid, username) => {
+export const makeFriendRequest = async (uid, username, clients) => {
   const friend = await getUserByUsername(username);
   if (!friend) throw new StatusError(404, 'User not found.');
   const user = await getUserByUid(uid);
@@ -114,9 +114,12 @@ export const makeFriendRequest = async (uid, username) => {
   );
   if (!res.acknowledged)
     throw new Error('Failed to create friend request.');
+  clients.get(friend._id.toString())?.forEach(client =>
+    client.send(`{"type":"friends"}`)
+  );
 };
 
-export const acceptFriendRequest = async (uid, id) => {
+export const acceptFriendRequest = async (uid, id, clients) => {
   const user = await getUserByUid(uid);
   id = forceObjectId(id);
   if (!user.requests.some(fid => fid.equals(id)))
@@ -145,9 +148,12 @@ export const acceptFriendRequest = async (uid, id) => {
   );
   if (!res2.acknowledged)
     throw new Error('Failed to accept friend request. (2)');
+  clients.get(id.toString())?.forEach(client =>
+    client.send(`{"type":"friends"}`)
+  );
 };
 
-export const removeFriend = async (uid, id) => {
+export const removeFriend = async (uid, id, clients) => {
   const user = await getUserByUid(uid);
   id = forceObjectId(id);
   if (!user.friends.some(fid => fid.equals(id)))
@@ -173,6 +179,9 @@ export const removeFriend = async (uid, id) => {
   );
   if (!res2.acknowledged)
     throw new Error('Failed to remove friend. (2)');
+  clients.get(id.toString())?.forEach(client =>
+    client.send(`{"type":"friends"}`)
+  );
 };
 
 export const declineFriendRequest = async (uid, id) => {

@@ -15,7 +15,10 @@ router.route('/')
       throw new StatusError(400, 'There must be 1 to 3 other players.');
 
     const initiator = await users.getUserByUid(req.firebaseId);
-    res.json(await games.createGame([...req.body.players, initiator._id]));
+    res.json(await games.createGame(
+      [...req.body.players, initiator._id],
+      req.dashClients
+    ));
   }))
   .get(sync(async (req, res) => {
     res.json(await games.getGames(req.firebaseId));

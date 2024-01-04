@@ -60,7 +60,7 @@ export function useWebSocket(dispatch) {
     attempt();
     return () => {
       ignore = true;
-      ws.close();
+      ws?.close();
       setWS(null);
       setCode(0);
     };

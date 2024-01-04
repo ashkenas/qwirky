@@ -18,7 +18,7 @@ const shuffle = array => {
   return array;
 };
 
-export const createGame = async players => {
+export const createGame = async (players, clients) => {
   if (typeof players !== 'object' || !Array.isArray(players))
     throw new StatusError(400, 'Must provide an array of players.');
   if (players.length > 4 || players.length < 2)
@@ -71,6 +71,12 @@ export const createGame = async players => {
 
   if (!res2.acknowledged || !res2.modifiedCount)
     throw new Error('Failed to add players to game.');
+
+  for (const player of players) {
+    clients.get(player.toString())?.forEach(client =>
+      client.send(`{"type":"profile"}`)
+    );
+  }
 
   return { _id: res.insertedId };
 };

@@ -21,7 +21,7 @@ const handler = f => function(data) {
   ));
 };
 
-export const gameMessage = (gameId, senderId, players) => handler(async data => {
+export const gameMessage = (gameId, senderId, players, dashClients) => handler(async data => {
   const game = await getGame(gameId);
   if (game.over)
     throw new Error('Game is over.');
@@ -71,7 +71,7 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
       if (game.board[x]?.[y])
         throw new Error('Invalid move. Cannot place a tile in an occupied space.');
 
-      if (!game.board[x + 1]?.[y] && !game.board[x - 1]?.[y]
+      if (!firstMove && !game.board[x + 1]?.[y] && !game.board[x - 1]?.[y]
             && !game.board[x]?.[y + 1] && !game.board[x]?.[y - 1]) {
         throw new Error('Invalid move. Cannot place a floating tile.');
       }
@@ -148,6 +148,9 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
         payload.hand = newState.hands[idx];
 
       players[player].forEach(ws => ws.send(JSON.stringify(payload)));
+      dashClients.get(player.toString())?.forEach(client =>
+        client.send(`{"type":"profile"}`)
+      );
     }
   } else if (data.type === 'trade') {
     if (game.pieces.length === 0)
@@ -186,6 +189,9 @@ export const gameMessage = (gameId, senderId, players) => handler(async data => 
         payload.hand = newState.hands[idx];
 
       players[player].forEach(ws => ws.send(JSON.stringify(payload)));
+      dashClients.get(player.toString())?.forEach(client =>
+        client.send(`{"type":"profile"}`)
+      );
     }
   }
 });

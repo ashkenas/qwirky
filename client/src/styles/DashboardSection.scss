@@ -39,8 +39,9 @@ a.section {
       max-height: 10rem;
       overflow-y: auto;
 
-      & .item {
-        padding: 0 0 0 1.5rem;
+      & .item::before {
+        padding: 0 .5rem 0 .25rem;
+        content: '•';
       }
     }
   }
