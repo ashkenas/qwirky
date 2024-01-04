@@ -95,7 +95,8 @@ export const getGames = async uid => {
           _id: '$_id',
           name: '$name',
           latestMoveTime: '$latestMoveTime',
-          currentPlayer: '$currentPlayer'
+          currentPlayer: '$currentPlayer',
+          over: '$over'
         },
         usernames: {
           $push: {
