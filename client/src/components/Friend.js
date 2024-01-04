@@ -19,11 +19,9 @@ export default function Friend({ friend, refetch }) {
   }, [loading, confirming, setConfirming, removeFriend]);
 
   return (
-    <div className="friend">
-      <p className="friend-name">{friend.username}</p>
-      <button onClick={clickRemoveFriend} className="friend-remove">
-        {confirming ? 'Confirm' : 'Remove'}
-      </button>
+    <div key={friend._id} className="item clickable friend" onClick={clickRemoveFriend}>
+      {friend.username}
+      <span className="remove">{confirming ? 'Confirm' : 'Remove'}</span>
     </div>
   );
 };

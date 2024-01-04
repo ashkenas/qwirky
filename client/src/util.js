@@ -113,8 +113,7 @@ export function useData(url, options = {}) {
       if (onComplete) onComplete(data);
     });
     return () => abort = true;
-  // eslint-disable-next-line
-  }, [url, user, setData, setError, setLoading, i]);
+  }, [url, user, setData, setError, setLoading, i, onComplete, onError]);
 
   return {
     data: data,
@@ -182,8 +181,7 @@ export function useAction(url, options = {}) {
       if (onComplete) onComplete(data);
     });
     return () => abort = true;
-  // eslint-disable-next-line
-  }, [url, user, setState]);
+  }, [url, user, setState, onComplete, onError, method]);
 
   return [action, state];
 };

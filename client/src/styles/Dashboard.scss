@@ -95,3 +95,58 @@ $arrow-half-width: math.div($arrow-width, 2);
     }
   }
 }
+
+.control {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.control input[type="text"] {
+  display: flex;
+  flex: 1;
+  font-size: 1rem;
+  padding: .5rem;
+  border: 1px solid grey;
+  box-shadow: inset 0 0 3px -1px;
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+
+  &:focus {
+    outline: 1px solid black;
+  }
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: .5rem;
+}
+
+.control [type="submit"] {
+  $background: #6278b6;
+
+  display: inline-block;
+  border-radius: 0 8px 8px 0;
+  border: 1px solid grey;
+  border-left: none;
+  font-size: 1rem;
+  color: $text-color;
+  background-color: $background;
+
+  &:hover {
+    background-color: scale-color($background, $lightness: -10%);
+  }
+
+  &.loading {
+    @include loading;
+  }
+}
+
+.item.friend {
+  display: flex;
+}
+
+.item.friend .remove {
+  color: #fa7e7e;
+  margin: 0 0 0 auto;
+}

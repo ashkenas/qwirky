@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 import { useAction, useData } from "../util";
-import "../styles/Friends.scss";
 import { Link } from "react-router-dom";
 import Friend from "./Friend";
 import FriendRequest from "./FriendRequest";
