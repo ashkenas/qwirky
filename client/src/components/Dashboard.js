@@ -143,7 +143,7 @@ export default function Dashboard() {
     }
     const over = profile.data.games.filter(game => game.over);
     if (over.length) {
-      finishedGames = notOver.map(game => (
+      finishedGames = over.map(game => (
         <Link key={game._id}
           className="item clickable game" to={`/game/${game._id}`}>
           <p className="name">{game.name}</p>
