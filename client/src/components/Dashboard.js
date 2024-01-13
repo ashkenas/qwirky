@@ -5,10 +5,11 @@ import Loading from "./Loading";
 import { useCallback, useState } from "react";
 import DashboardSection from "./DashboardSection";
 import Accordion from "./Accordion";
-import "../styles/Dashboard.scss";
 import Friend from "./Friend";
 import FriendRequest from "./FriendRequest";
 import Chevron from "./Chevron";
+import { AnimatePresence, motion } from "framer-motion";
+import "../styles/Dashboard.scss";
 
 export default function Dashboard() {
   const [name, setName] = useState('');
@@ -176,6 +177,10 @@ export default function Dashboard() {
     );
   }
 
+  const initialSection = friends.data?.requests.length > 0
+    ? "Friend Requests"
+    : "New Game";
+
   return (<>
     <h1 className="title dash">
       <span className="color1">Q</span>
@@ -187,105 +192,111 @@ export default function Dashboard() {
     </h1>
     <div className="columns">
       <div className="column">
-        <Link to="/how-to" className="section">
-          <h2>
-            The Rules<Chevron expand="Left" />
-          </h2>
-        </Link>
-        <Accordion initial={"New Game"}>
-          <DashboardSection title={"Profile"}>
-            <div className="item">
-              <form onSubmit={onSubmitSetUsername}>
-                <label htmlFor="change-name">
-                  Change Name
-                </label>
-                <div className="control">
-                  <input type="text" value={name}
-                    id="change-name"
-                    onChange={onNameChange}
-                    onBlur={onNameChange} />
-                  <button className={editLoading ? "loading" : ""}
-                    type="submit" disabled={editLoading}>
-                    Change
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div className="item sign-out"
-              onClick={() => auth.signOut()}
-              role="button">
-              Sign Out
-            </div>
-          </DashboardSection>
-          <DashboardSection title={"Friends"}>
-            <div className="item">
-              <form onSubmit={onSubmitAddFriend}>
-                <label htmlFor="add-friend-name">
-                  Add Friend
-                </label>
-                <div className="control">
-                  <input type="text" value={friendName}
-                    id="add-friend-name"
-                    onChange={onFriendNameChange}
-                    onBlur={onFriendNameChange} />
-                  <button className={addFriendLoading ? "loading" : ""}
-                    type="submit" disabled={addFriendLoading}>
-                    Add
-                  </button>
-                </div>
-              </form>
-            </div>
-            {!friends.data && friends.loading && <Loading inline />}
-            {!friends.loading && friends.error ?
+        <motion.section className="section"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}>
+          <Link to="/how-to">
+            <h2>
+              The Rules<Chevron expand="Left" />
+            </h2>
+          </Link>
+        </motion.section>
+        <Accordion initial={initialSection}>
+          <AnimatePresence>
+            <DashboardSection key={"Profile"} title={"Profile"}>
               <div className="item">
-                Something went wrong. Please try again later.
+                <form onSubmit={onSubmitSetUsername}>
+                  <label htmlFor="change-name">
+                    Change Name
+                  </label>
+                  <div className="control">
+                    <input type="text" value={name}
+                      id="change-name"
+                      onChange={onNameChange}
+                      onBlur={onNameChange} />
+                    <button className={editLoading ? "loading" : ""}
+                      type="submit" disabled={editLoading}>
+                      Change
+                    </button>
+                  </div>
+                </form>
               </div>
-            : friends.data && friends.data.friends.map(friend =>
-              <Friend key={friend._id} friend={friend} refetch={friends.refetch} />
-            )}
-          </DashboardSection>
-          { friends.data?.requests.length > 0 &&
-            <DashboardSection title={"Friend Requests"}>
+              <div className="item sign-out"
+                onClick={() => auth.signOut()}
+                role="button">
+                Sign Out
+              </div>
+            </DashboardSection>
+            <DashboardSection key={"Friends"} title={"Friends"}>
+              <div className="item">
+                <form onSubmit={onSubmitAddFriend}>
+                  <label htmlFor="add-friend-name">
+                    Add Friend
+                  </label>
+                  <div className="control">
+                    <input type="text" value={friendName}
+                      id="add-friend-name"
+                      onChange={onFriendNameChange}
+                      onBlur={onFriendNameChange} />
+                    <button className={addFriendLoading ? "loading" : ""}
+                      type="submit" disabled={addFriendLoading}>
+                      Add
+                    </button>
+                  </div>
+                </form>
+              </div>
               {!friends.data && friends.loading && <Loading inline />}
               {!friends.loading && friends.error ?
                 <div className="item">
                   Something went wrong. Please try again later.
                 </div>
-              : friends.data && friends.data.requests.map(friend =>
-                <FriendRequest key={friend._id} friend={friend} refetch={friends.refetch} />
+              : friends.data && friends.data.friends.map(friend =>
+                <Friend key={friend._id} friend={friend} refetch={friends.refetch} />
               )}
             </DashboardSection>
-          }
-          <DashboardSection title={"New Game"}>
-            <div className="item">
-              Select 1-3 friends to play with you.
-            </div>
-            <div className="item">
-              <label htmlFor="search-friends">
-                Search Friends
-              </label>
-              <div className="control solo">
-                <input id="search-friends" type="text"
-                  onChange={onFriendSearchChange}
-                  onBlur={onFriendSearchChange} />
-              </div>
-            </div>
-            <div className="item super">
-              {resultItems}
-            </div>
-            <div className="item">
-                Selected Players: {selectedPlayers.map((fid, i) =>
-                  <span key={fid} className="cross-out"
-                    onClick={removePlayer(fid)}>
-                    {friends.data.friends.find(f => f._id === fid).username
-                      + (i < selectedPlayers.length - 1 ? ', ' : '')}
-                  </span>
+            { friends.data?.requests.length > 0 &&
+              <DashboardSection key={"Requests"} title={"Friend Requests"}>
+                {!friends.data && friends.loading && <Loading inline />}
+                {!friends.loading && friends.error ?
+                  <div className="item">
+                    Something went wrong. Please try again later.
+                  </div>
+                : friends.data && friends.data.requests.map(friend =>
+                  <FriendRequest key={friend._id} friend={friend} refetch={friends.refetch} />
                 )}
-            </div>
-            <div className="item start" onClick={onClickCreateGame}>
-              Start New Game
-            </div>
-          </DashboardSection>
+              </DashboardSection>
+            }
+            <DashboardSection key={"New"} title={"New Game"}>
+              <div className="item">
+                Select 1-3 friends to play with you.
+              </div>
+              <div className="item">
+                <label htmlFor="search-friends">
+                  Search Friends
+                </label>
+                <div className="control solo">
+                  <input id="search-friends" type="text"
+                    onChange={onFriendSearchChange}
+                    onBlur={onFriendSearchChange} />
+                </div>
+              </div>
+              <div className="item super">
+                {resultItems}
+              </div>
+              <div className="item">
+                  Selected Players: {selectedPlayers.map((fid, i) =>
+                    <span key={fid} className="cross-out"
+                      onClick={removePlayer(fid)}>
+                      {friends.data.friends.find(f => f._id === fid).username
+                        + (i < selectedPlayers.length - 1 ? ', ' : '')}
+                    </span>
+                  )}
+              </div>
+              <div className="item start" onClick={onClickCreateGame}>
+                Start New Game
+              </div>
+            </DashboardSection>
+          </AnimatePresence>
         </Accordion>
       </div>
       <div className="column">

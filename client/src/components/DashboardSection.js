@@ -9,7 +9,10 @@ export default function DashboardSection({ title, children }) {
   const isOpen = open === title;
 
   return (
-      <motion.section className="section">
+      <motion.section key={title} className="section"
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}>
         <motion.h2 onClick={() => setOpen(isOpen ? false : title)}>
           {title} <Chevron down={!isOpen} up={isOpen} expand="Left" />
         </motion.h2>
