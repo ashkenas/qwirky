@@ -8,11 +8,13 @@ export default function Instructions() {
   return (
     <div className="columns instructions">
       <div className="column">
-        <Link to="/dash" className="section"  aria-label="back">
-          <h2>
-            <Chevron left />&nbsp;Back 
-          </h2>
-        </Link>
+        <section className="section">
+          <Link to="/dash" aria-label="back">
+            <h2>
+              <Chevron left />&nbsp;Back 
+            </h2>
+          </Link>
+        </section>
         <section className="section">
           <h2>
             The Tiles
@@ -246,11 +248,13 @@ export default function Instructions() {
             <Gamepiece value={0x43} x={3} y={-3} />
           </DemoBoard>
         </section>
-        <Link to="/dash" className="section"  aria-label="back">
-          <h2>
-            <Chevron left />&nbsp;Back 
-          </h2>
-        </Link>
+        <section className="section">
+          <Link to="/dash" aria-label="back">
+            <h2>
+              <Chevron left />&nbsp;Back 
+            </h2>
+          </Link>
+        </section>
       </div>
     </div>
   );
