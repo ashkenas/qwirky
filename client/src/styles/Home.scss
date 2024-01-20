@@ -51,6 +51,8 @@
 .title {
   font-size: 5rem;
   margin: 0;
+  pointer-events: none;
+  touch-action: none;
 
   @for $idx from 1 to 7 {
     $color: nth($colors, $idx);
