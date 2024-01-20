@@ -6,7 +6,7 @@ import Chevron from "./Chevron";
 import Scoreboard from "./Scoreboard";
 
 export default function GameStatusBar() {
-  const { tilesLeft, currentPlayer, players } = useContext(GameContext);
+  const { tilesLeft, currentPlayer, players, over } = useContext(GameContext);
   const [showScoreboard, setShowScoreboard] = useState(false);
 
   const toggleScoreboard = useCallback(() => {
@@ -23,8 +23,8 @@ export default function GameStatusBar() {
         {tilesLeft}
         <span>Remaining tiles in bag.</span>
       </span>
-      <span id="current-player">{players[currentPlayer]}</span>
-      <span>'s turn</span>
+      <span id="current-player">{over ? 'Game Over' : players[currentPlayer]}</span>
+      <span>{!over ? '\'s turn' : ''}</span>
       <span tabIndex={0} id="scoreboard-btn" onClick={toggleScoreboard}>
         <Chevron down={!showScoreboard} up={showScoreboard} />
         &nbsp;Scoreboard
