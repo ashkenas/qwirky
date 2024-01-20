@@ -80,7 +80,9 @@ export default function Home() {
 
   return (
     <div className="homepage">
-      <MotionPieces />
+      {/* <MotionPieces /> */}
+      <div className="tiled-bg">
+      </div>
       <div className="content">
         <h1 className="title">
           <span className="color1">Q</span>

@@ -1,5 +1,15 @@
 @import "_base";
 
+@keyframes bg-scroll {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 384px 384px;
+  }
+}
+
 .homepage {
   position: relative;
   display: flex;
@@ -15,7 +25,7 @@
     text-align: center;
     justify-content: center;
     align-items: center;
-    background-color: #22222299;
+    background-color: #222222D0;
     padding: 2rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 
@@ -24,7 +34,7 @@
     }
   }
 
-  .rain {
+  .tiled-bg {
     display: block;
     position: absolute;
     top: 0;
@@ -33,6 +43,8 @@
     bottom: 0;
     overflow: hidden;
     z-index: -1;
+    background: url('../../public/img/tiled-bg-full.png') repeat;
+    animation: 6s bg-scroll 0s linear infinite;
   }
 }
 
@@ -53,16 +65,16 @@
 .landing-rules {
   display: block;
   margin: 0 0 1rem 0;
-  padding: .5rem;
   text-decoration: none;
   color: #757575;
   border-radius: 4px;
   background-color: #fefefe;
   box-shadow: 0 3px 0 0 #b9b9b9, 0 0px 3px -2px black;
+  transition: .25s transform, .25s box-shadow;
 
   h2 {
-    font-size: 1.5rem;
-    margin: 0;
+    font-size: 1rem;
+    margin: .75rem 1rem;
   }
   
   .chevron {
