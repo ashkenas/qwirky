@@ -107,6 +107,8 @@ export const gameReducer = (state, action) => {
       placed: [...state.placed, [val, x, y]]
     };
     newState.hand.splice(state.selected, 1);
+    if (!state.board)
+      newState.coords.current[0] = newState.coords.current[1] = 0;
 
     let sameX = true, sameY = true;
     let minX = x, maxX = x, minY = y, maxY = y;
@@ -166,12 +168,13 @@ export const gameReducer = (state, action) => {
       placed: []
     };
 
-    let replaceRoot = false;
     for (const [, x, y] of state.placed) {
-      if (x === 0 && y === 0) replaceRoot = true;
+      if (x === 0 && y === 0) {
+        newState.board = null;
+        break;
+      }
       if (newState.board[x]) delete newState.board[x][y];
     }
-    if (replaceRoot) newState.board = null;
 
     return newState;
   } else if (action.type === 'select') {

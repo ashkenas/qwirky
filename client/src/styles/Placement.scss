@@ -4,13 +4,24 @@ button.placement {
   position: absolute;
   display: block;
   border: none;
-  background-color: inherit;
+  background-color: transparent;
   height: $tile-size;
   width: $tile-size;
   transition: .2s background-color;
+  padding: 0;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &.full {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+  }
 
   &:hover, &.hover {
-    background-color: #555555;
+    background-color: #55555555;
   }
 }

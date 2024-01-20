@@ -8,7 +8,7 @@ const pageDist = (a, b) => Math.hypot(a.pageX - b.pageX, a.pageY - b.pageY) ** 2
 const avg = (vals) => vals.reduce((a, b) => a + b) / vals.length;
 
 export default function GameBoard() {
-  const { board, placed, lastMove, dragDisabled, coords } = useContext(GameContext);
+  const { board, placed, lastMove, dragDisabled, coords, yourTurn } = useContext(GameContext);
   const centerRef = useRef(null);
   // React doesn't support active listeners
   const boardRef = useRef(null);
@@ -42,9 +42,7 @@ export default function GameBoard() {
           pieces.unshift(<Placement key={`${x},${y}`} x={+x} y={+y} />);
       
       return pieces;
-    } else {
-      return [<Placement key="0,0" x={0} y={0} />];
-    }
+    } else return false;
   }, [board, placed, lastMove]);
 
   const move = useCallback((e) => {
@@ -54,8 +52,8 @@ export default function GameBoard() {
     const scale = coords.current[2];
     const x = coords.current[0] += e.movementX / scale;
     const y = coords.current[1] += e.movementY / scale;
-    centerRef.current.style.setProperty('--offset-x', `${x}px`);
-    centerRef.current.style.setProperty('--offset-y', `${y}px`);
+    boardRef.current.style.setProperty('--offset-x', `${x}px`);
+    boardRef.current.style.setProperty('--offset-y', `${y}px`);
   }, [setMoving, dragDisabled, coords]);
 
   const doneMoving = useCallback((e) => {
@@ -76,9 +74,9 @@ export default function GameBoard() {
     coords.current[1] = (((y + (height / 2) - clientY) * scaleBy)
       + clientY - (window.innerHeight / 2)) / newScale;
     coords.current[2] = newScale;
-    centerRef.current.style.setProperty('--scale', coords.current[2]);
-    centerRef.current.style.setProperty('--offset-x', `${coords.current[0]}px`);
-    centerRef.current.style.setProperty('--offset-y', `${coords.current[1]}px`);
+    boardRef.current.style.setProperty('--scale', coords.current[2]);
+    boardRef.current.style.setProperty('--offset-x', `${coords.current[0]}px`);
+    boardRef.current.style.setProperty('--offset-y', `${coords.current[1]}px`);
   }, [coords]);
 
   const lastTouches = useRef(null);
@@ -101,9 +99,9 @@ export default function GameBoard() {
         coords.current[1] = (((y + (height / 2) - centerY) * r)
           + centerY - (window.innerHeight / 2)) / newScale;
         coords.current[2] = newScale;
-        centerRef.current.style.setProperty('--scale', coords.current[2]);
-        centerRef.current.style.setProperty('--offset-x', `${coords.current[0]}px`);
-        centerRef.current.style.setProperty('--offset-y', `${coords.current[1]}px`);
+        boardRef.current.style.setProperty('--scale', coords.current[2]);
+        boardRef.current.style.setProperty('--offset-x', `${coords.current[0]}px`);
+        boardRef.current.style.setProperty('--offset-y', `${coords.current[1]}px`);
       }
     }
     lastTouches.current = e.touches;
@@ -126,11 +124,15 @@ export default function GameBoard() {
     }
   }, [touchMoveListener, touchEndListener, wheelListener]);
 
+  boardRef.current?.style.setProperty('--offset-x', `${coords.current[0]}px`);
+  boardRef.current?.style.setProperty('--offset-y', `${coords.current[1]}px`);
+
   return (
     <div ref={boardRef}
       className="game-board"
       onMouseMove={move}
       onClickCapture={doneMoving}>
+      {!pieces && yourTurn && <Placement full x={0} y={0} />}
       <div className="center-piece" ref={centerRef}>
         {pieces}
       </div>

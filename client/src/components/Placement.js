@@ -2,7 +2,7 @@ import { useCallback, useContext } from "react";
 import { GameContext, GameDispatchContext, placePiece } from "../contexts/GameContext";
 import "../styles/Placement.scss";
 
-export default function Placement({ x, y }) {
+export default function Placement({ x, y, full }) {
   const dispatch = useContext(GameDispatchContext);
   const { dragDisabled } = useContext(GameContext);
 
@@ -14,11 +14,16 @@ export default function Placement({ x, y }) {
     dragDisabled && dispatch(placePiece(x, y));
   }, [x, y, dragDisabled, dispatch])
 
-  const center = x === 0 && y === 0;
+  if (full) {
+    return (
+      <button className="placement full"
+        onClick={onClick}
+        onMouseUp={onDragEnd} />
+    );
+  }
 
   return (
-    <button
-      className={`placement${center ? ' hover' : ''}`}
+    <button className="placement"
       onClick={onClick}
       onMouseUp={onDragEnd}
       style={{ top: `${-y}00%`, left: `${x}00%` }} />
