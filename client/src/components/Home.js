@@ -31,15 +31,15 @@ export default function Home() {
         <p>
           A simple yet fun multiplayer tile matching game.
         </p>
-        <Link to="/how-to" className="landing-rules">
-          <h2>
-            The Rules&nbsp;<Chevron expand="Left" />
-          </h2>
-        </Link>
-        <button className="social-btn" onClick={() => signInWithPopup(auth, googleProvider)}>
-          <img src="/google-signin.svg" alt="Sign in with Google"/>
-          Sign in with Google
-        </button>
+        <div>
+          <Link to="/how-to" className="landing-rules">
+            How To Play
+          </Link>
+          <button className="social-btn" onClick={() => signInWithPopup(auth, googleProvider)}>
+            <img src="/google-signin.svg" alt="Sign in with Google"/>
+            Sign in with Google
+          </button>
+        </div>
       </div>
     </div>
   );
